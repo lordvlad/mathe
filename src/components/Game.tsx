@@ -99,23 +99,26 @@ export function Game() {
   };
 
   // Render different screens based on state
+  
+  // Check for session completion FIRST (before checking isSessionActive)
+  if (sessionProgress >= 10 && selectedAnimal && currentSession) {
+    return (
+      <SessionComplete
+        correctCount={correctCount}
+        treat={currentSession.treat}
+        animal={selectedAnimal}
+        onPlayAgain={handlePlayAgain}
+      />
+    );
+  }
+
+  // Show welcome screen if no animal selected or session not active
   if (!selectedAnimal || !isSessionActive) {
     return (
       <WelcomeScreen
         selectedAnimal={selectedAnimal}
         onSelectAnimal={handleSelectAnimal}
         onStartSession={handleStartSession}
-      />
-    );
-  }
-
-  if (sessionProgress >= 10) {
-    return (
-      <SessionComplete
-        correctCount={correctCount}
-        treat={currentSession!.treat}
-        animal={selectedAnimal}
-        onPlayAgain={handlePlayAgain}
       />
     );
   }
