@@ -3,6 +3,16 @@ import index from "./index.html";
 
 const server = serve({
   routes: {
+    // Serve static assets
+    "/assets/*": async (req) => {
+      const path = new URL(req.url).pathname;
+      const file = Bun.file(`./public${path}`);
+      if (await file.exists()) {
+        return new Response(file);
+      }
+      return new Response("Not Found", { status: 404 });
+    },
+
     // Serve index.html for all unmatched routes.
     "/*": index,
 
