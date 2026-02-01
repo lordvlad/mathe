@@ -7,6 +7,7 @@ import { WelcomeScreen } from './WelcomeScreen';
 import { ProgressBar } from './ProgressBar';
 import { ProblemDisplay } from './ProblemDisplay';
 import { FeedbackOverlay } from './FeedbackOverlay';
+import { HalfwayCelebration } from './HalfwayCelebration';
 import { SessionComplete } from './SessionComplete';
 
 export function Game() {
@@ -28,6 +29,7 @@ export function Game() {
   } = useGameStore();
 
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showHalfway, setShowHalfway] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
   const [startTime, setStartTime] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -78,11 +80,23 @@ export function Game() {
   // Continue after feedback
   const handleContinue = () => {
     setShowFeedback(false);
+    
+    // Check if we've reached halfway (5 problems completed)
+    if (sessionProgress === 4) {
+      // Next problem will be #5, show celebration
+      setShowHalfway(true);
+    }
+    
     nextProblem();
     
     // Update difficulty after each problem
     const newDifficulty = calculateDifficulty(performanceHistory, difficulty);
     updateDifficulty(newDifficulty);
+  };
+
+  // Continue after halfway celebration
+  const handleHalfwayContinue = () => {
+    setShowHalfway(false);
   };
 
   // Play again after session complete
@@ -147,6 +161,14 @@ export function Game() {
           correct={lastAnswerCorrect}
           shouldCelebrate={shouldCelebrate(performanceHistory)}
           onContinue={handleContinue}
+        />
+      )}
+
+      {showHalfway && currentSession && selectedAnimal && (
+        <HalfwayCelebration
+          animal={selectedAnimal}
+          treat={currentSession.treat}
+          onContinue={handleHalfwayContinue}
         />
       )}
     </>
