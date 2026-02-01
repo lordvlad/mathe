@@ -87,7 +87,15 @@ export function Game() {
 
   // Play again after session complete
   const handlePlayAgain = () => {
+    if (!selectedAnimal) return;
+    
+    // Reset counters and start a fresh session
+    setCorrectCount(0);
+    const session = createSession(selectedAnimal);
+    
+    // Reset session state and start new one
     resetSession();
+    startSession(session);
   };
 
   // Render different screens based on state
