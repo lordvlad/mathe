@@ -175,16 +175,68 @@ function generateComparison(difficulty: Difficulty['comparison']): Problem {
 
 /**
  * Generate pattern problem
+ * At higher difficulties, uses skip counting (every 2nd, 3rd, 5th number)
+ * At very high difficulties, includes alternating patterns
  */
 function generatePattern(difficulty: Difficulty['pattern']): Problem {
   const start = randomInt(difficulty.min, difficulty.max);
-  const step = difficulty.step;
   
-  // Generate a simple arithmetic sequence
-  const sequence = [start, start + step, start + step * 2];
-  const answer = start + step * 3;
+  // Determine pattern type based on difficulty level
+  let sequence: number[];
+  let answer: number;
+  let patternDescription: string = '';
   
-  const question = `${sequence.join(', ')}, ?`;
+  if (difficulty.max >= 40) {
+    // Very advanced: alternating patterns (e.g., +2, +3, +2, +3...)
+    const useAlternating = Math.random() < 0.3; // 30% chance
+    
+    if (useAlternating) {
+      const step1 = randomInt(1, 3);
+      const step2 = randomInt(1, 3);
+      sequence = [
+        start,
+        start + step1,
+        start + step1 + step2,
+      ];
+      answer = start + step1 + step2 + step1;
+      patternDescription = ` (+${step1}, +${step2}, +${step1}, ?)`;
+    } else {
+      // Skip counting by 3 or 5
+      const step = Math.random() < 0.5 ? 3 : 5;
+      sequence = [start, start + step, start + step * 2];
+      answer = start + step * 3;
+      patternDescription = ` (Immer +${step})`;
+    }
+  } else if (difficulty.max >= 30) {
+    // Advanced: skip counting by 2, 3, or 5
+    const steps = [2, 3, 5];
+    const step = steps[randomInt(0, steps.length - 1)]!;
+    sequence = [start, start + step, start + step * 2];
+    answer = start + step * 3;
+    patternDescription = ` (Immer +${step})`;
+  } else if (difficulty.max >= 20) {
+    // Intermediate: skip counting by 2, or countdown
+    const useCountdown = Math.random() < 0.2; // 20% chance for countdown
+    
+    if (useCountdown && start >= 6) {
+      const step = -2;
+      sequence = [start, start + step, start + step * 2];
+      answer = start + step * 3;
+      patternDescription = ' (Immer -2)';
+    } else {
+      const step = Math.random() < 0.5 ? 1 : 2;
+      sequence = [start, start + step, start + step * 2];
+      answer = start + step * 3;
+      patternDescription = step === 2 ? ' (Immer +2)' : '';
+    }
+  } else {
+    // Beginner: simple +1 counting
+    const step = 1;
+    sequence = [start, start + step, start + step * 2];
+    answer = start + step * 3;
+  }
+  
+  const question = `${sequence.join(', ')}, ?${patternDescription}`;
   
   const distractors = generateDistractors(answer);
   const options = shuffle([answer, ...distractors]);
