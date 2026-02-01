@@ -35,7 +35,7 @@ const itemVariants = {
 export function AnimalSelector({ onSelect }: AnimalSelectorProps) {
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Pick your companion!</h1>
+      <h1 className={styles.heading}>Wähle deinen Begleiter!</h1>
       
       <motion.div
         className={styles.grid}

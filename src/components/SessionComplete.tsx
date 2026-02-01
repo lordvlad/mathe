@@ -48,26 +48,26 @@ export function SessionComplete({
         className={styles.heading}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.8 }}
       >
-        You made it!
+        Geschafft!
       </motion.h1>
       
       <motion.div
         className={styles.stats}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
+        transition={{ delay: 1.2 }}
       >
-        You got <strong>{correctCount} out of 10</strong> right!
+        Du hast <strong>{correctCount} von 10</strong> richtig!
       </motion.div>
       
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 2.0 }}
       >
-        <Button onClick={onPlayAgain}>Play Again</Button>
+        <Button onClick={onPlayAgain}>Nochmal spielen</Button>
       </motion.div>
     </motion.div>
   );

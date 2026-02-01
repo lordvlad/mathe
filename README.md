@@ -1,6 +1,8 @@
-# Math Fun 🎯
+# Mathe Spaß 🎯
 
-A cute, adaptive math game for preschool and elementary students (ages 5-8). Help your chosen animal companion reach their favorite treat by solving fun math problems!
+Ein süßes, adaptives Mathespiel für Vorschul- und Grundschulkinder (5-8 Jahre). Hilf deinem Tier-Begleiter, seine Lieblingsleckerei zu erreichen, indem du lustige Matheaufgaben löst!
+
+*A cute, adaptive math game for preschool and elementary students (ages 5-8) - in German.*
 
 ## Features
 

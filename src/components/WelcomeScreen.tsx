@@ -32,7 +32,7 @@ export function WelcomeScreen({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <h1 className={styles.title}>Let's practice math!</h1>
+        <h1 className={styles.title}>Lass uns Mathe üben!</h1>
         <AnimalSelector onSelect={onSelectAnimal} />
       </motion.div>
     );
@@ -53,12 +53,12 @@ export function WelcomeScreen({
       </motion.div>
       
       <h1 className={styles.greeting}>
-        Welcome back {ANIMAL_EMOJI[selectedAnimal]}!
+        Willkommen zurück {ANIMAL_EMOJI[selectedAnimal]}!
       </h1>
       
-      <p className={styles.message}>Ready for some math fun?</p>
+      <p className={styles.message}>Bereit für Mathe-Spaß?</p>
       
-      <Button onClick={onStartSession}>Start Session</Button>
+      <Button onClick={onStartSession}>Los geht's</Button>
     </motion.div>
   );
 }

@@ -45,7 +45,7 @@ export function ProgressBar({ current, total, animal, treat }: ProgressBarProps)
       </div>
       
       <div className={styles.progressText}>
-        {current} of {total}
+        {current} von {total}
       </div>
     </div>
   );

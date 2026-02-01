@@ -93,7 +93,7 @@ function generateCounting(difficulty: Difficulty['counting']): Problem {
   
   return {
     type: 'counting',
-    question: 'How many do you see?',
+    question: 'Wie viele siehst du?',
     answer: count,
     options,
     displayItems,
@@ -112,7 +112,7 @@ function generateNext(difficulty: Difficulty['next']): Problem {
   
   return {
     type: 'next',
-    question: `What comes after ${number}?`,
+    question: `Was kommt nach ${number}?`,
     answer,
     options,
   };
@@ -130,7 +130,7 @@ function generatePrevious(difficulty: Difficulty['previous']): Problem {
   
   return {
     type: 'previous',
-    question: `What comes before ${number}?`,
+    question: `Was kommt vor ${number}?`,
     answer,
     options,
   };
@@ -147,14 +147,14 @@ function generateComparison(difficulty: Difficulty['comparison']): Problem {
   let question: string;
   
   if (a > b) {
-    question = `Which is bigger: ${a} or ${b}?`;
+    question = `Welche Zahl ist größer: ${a} oder ${b}?`;
     answer = a;
   } else if (a < b) {
-    question = `Which is bigger: ${a} or ${b}?`;
+    question = `Welche Zahl ist größer: ${a} oder ${b}?`;
     answer = b;
   } else {
     // Equal case
-    question = `Are ${a} and ${b} the same?`;
+    question = `Sind ${a} und ${b} gleich groß?`;
     answer = a; // Use a as answer (they're equal)
   }
   

@@ -9,8 +9,8 @@ interface FeedbackOverlayProps {
 }
 
 const ENCOURAGING_MESSAGES = {
-  correct: ['Nice!', 'Great job!', 'Awesome!', 'You got it!', 'Perfect!'],
-  tryAgain: ['Try again!', 'Almost!', 'Keep going!', 'You can do it!'],
+  correct: ['Super!', 'Toll gemacht!', 'Prima!', 'Du schaffst das!', 'Perfekt!'],
+  tryAgain: ['Versuch es nochmal!', 'Fast!', 'Weiter so!', 'Du kannst das!'],
 };
 
 export function FeedbackOverlay({ correct, shouldCelebrate, onContinue }: FeedbackOverlayProps) {
