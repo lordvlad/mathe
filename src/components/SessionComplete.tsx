@@ -12,14 +12,14 @@ interface SessionCompleteProps {
 }
 
 const ANIMAL_IMAGES: Record<CompanionAnimal, string> = {
-  rabbit: '/assets/animals/rabbit.png',
-  bear: '/assets/animals/bear.png',
-  fox: '/assets/animals/fox.png',
-  dog: '/assets/animals/dog.png',
-  cat: '/assets/animals/cat.png',
-  panda: '/assets/animals/panda.png',
-  koala: '/assets/animals/koala.png',
-  lion: '/assets/animals/lion.png',
+  rabbit: './assets/animals/rabbit.png',
+  bear: './assets/animals/bear.png',
+  fox: './assets/animals/fox.png',
+  dog: './assets/animals/dog.png',
+  cat: './assets/animals/cat.png',
+  panda: './assets/animals/panda.png',
+  koala: './assets/animals/koala.png',
+  lion: './assets/animals/lion.png',
 };
 
 export function SessionComplete({

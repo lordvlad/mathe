@@ -7,14 +7,14 @@ interface AnimalSelectorProps {
 }
 
 const ANIMALS: { animal: CompanionAnimal; name: string; image: string }[] = [
-  { animal: 'rabbit', name: 'Hase', image: '/assets/animals/rabbit.png' },
-  { animal: 'bear', name: 'Bär', image: '/assets/animals/bear.png' },
-  { animal: 'fox', name: 'Fuchs', image: '/assets/animals/fox.png' },
-  { animal: 'dog', name: 'Hund', image: '/assets/animals/dog.png' },
-  { animal: 'cat', name: 'Katze', image: '/assets/animals/cat.png' },
-  { animal: 'panda', name: 'Panda', image: '/assets/animals/panda.png' },
-  { animal: 'koala', name: 'Koala', image: '/assets/animals/koala.png' },
-  { animal: 'lion', name: 'Löwe', image: '/assets/animals/lion.png' },
+  { animal: 'rabbit', name: 'Hase', image: './assets/animals/rabbit.png' },
+  { animal: 'bear', name: 'Bär', image: './assets/animals/bear.png' },
+  { animal: 'fox', name: 'Fuchs', image: './assets/animals/fox.png' },
+  { animal: 'dog', name: 'Hund', image: './assets/animals/dog.png' },
+  { animal: 'cat', name: 'Katze', image: './assets/animals/cat.png' },
+  { animal: 'panda', name: 'Panda', image: './assets/animals/panda.png' },
+  { animal: 'koala', name: 'Koala', image: './assets/animals/koala.png' },
+  { animal: 'lion', name: 'Löwe', image: './assets/animals/lion.png' },
 ];
 
 const containerVariants = {

@@ -1,6 +1,7 @@
 {
   "name": "Math Fun - Preschool Math Game",
   "short_name": "Math Fun",
+  "version": "2.0.0",
   "description": "A cute adaptive math game for ages 5-8",
   "start_url": "/",
   "display": "standalone",
@@ -8,22 +9,22 @@
   "theme_color": "#B3E5FC",
   "icons": [
     {
-      "src": "/assets/icons/icon-64.png",
+      "src": "./assets/icons/icon-64.png",
       "sizes": "64x64",
       "type": "image/png"
     },
     {
-      "src": "/assets/icons/icon-128.png",
+      "src": "./assets/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/assets/icons/icon-256.png",
+      "src": "./assets/icons/icon-256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/assets/icons/icon-512.png",
+      "src": "./assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
