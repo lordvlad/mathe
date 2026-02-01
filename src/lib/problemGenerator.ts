@@ -143,24 +143,27 @@ function generateComparison(difficulty: Difficulty['comparison']): Problem {
   const a = randomInt(difficulty.min, difficulty.max);
   const b = randomInt(difficulty.min, difficulty.max);
   
-  let answer: number;
-  let question: string;
-  
-  if (a > b) {
-    question = `Welche Zahl ist größer: ${a} oder ${b}?`;
-    answer = a;
-  } else if (a < b) {
-    question = `Welche Zahl ist größer: ${a} oder ${b}?`;
-    answer = b;
-  } else {
-    // Equal case
-    question = `Sind ${a} und ${b} gleich groß?`;
-    answer = a; // Use a as answer (they're equal)
+  // Avoid equal numbers - only ask "which is bigger"
+  if (a === b) {
+    // Regenerate b to ensure they're different
+    const newB = a + (Math.random() < 0.5 ? -1 : 1);
+    const bFinal = Math.max(difficulty.min, Math.min(difficulty.max, newB));
+    
+    const answer = a > bFinal ? a : bFinal;
+    const question = `Welche Zahl ist größer: ${a} oder ${bFinal}?`;
+    const options = shuffle([a, bFinal]);
+    
+    return {
+      type: 'comparison',
+      question,
+      answer,
+      options,
+    };
   }
   
-  const options = a === b 
-    ? shuffle([a, a + 1, a - 1, a + 2]) // Equal case: yes/no style
-    : shuffle([a, b]); // Not equal: choose the bigger one
+  const answer = a > b ? a : b;
+  const question = `Welche Zahl ist größer: ${a} oder ${b}?`;
+  const options = shuffle([a, b]);
   
   return {
     type: 'comparison',
