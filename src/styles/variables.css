@@ -1,0 +1,58 @@
+/**
+ * Bright Pastel Color Palette
+ * For ages 5-8: cheerful, friendly, easy on the eyes
+ */
+:root {
+  /* Bright Pastel Colors */
+  --pastel-pink: #FFB3D9;
+  --pastel-blue: #B3E5FC;
+  --pastel-yellow: #FFF9C4;
+  --pastel-green: #C8E6C9;
+  --pastel-purple: #E1BEE7;
+  --pastel-peach: #FFCCBC;
+
+  /* Text Colors */
+  --text-dark: #2D3748;
+  --text-medium: #4A5568;
+  --text-light: #718096;
+
+  /* Background */
+  --bg-gradient-start: #FFF9C4;
+  --bg-gradient-end: #B3E5FC;
+
+  /* Typography - Large and readable for ages 5-8 */
+  --font-size-xs: 1rem;      /* 16px */
+  --font-size-sm: 1.25rem;   /* 20px */
+  --font-size-base: 1.5rem;  /* 24px */
+  --font-size-lg: 2rem;      /* 32px */
+  --font-size-xl: 2.5rem;    /* 40px */
+  --font-size-2xl: 3rem;     /* 48px */
+  --font-size-3xl: 4rem;     /* 64px */
+
+  /* Font Family */
+  --font-family-base: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  
+  /* Spacing Scale */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 1.5rem;   /* 24px */
+  --spacing-lg: 2rem;     /* 32px */
+  --spacing-xl: 3rem;     /* 48px */
+  --spacing-2xl: 4rem;    /* 64px */
+
+  /* Border Radius - Rounded and friendly */
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius-md: 1rem;      /* 16px */
+  --radius-lg: 1.5rem;    /* 24px */
+  --radius-full: 9999px;  /* Fully rounded */
+
+  /* Shadows - Soft and subtle */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* Animation Timing */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}

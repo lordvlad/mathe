@@ -1,0 +1,33 @@
+.container {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%
+  );
+  font-family: var(--font-family-base);
+  color: var(--text-dark);
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+.content {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .content {
+    gap: var(--spacing-md);
+  }
+}
