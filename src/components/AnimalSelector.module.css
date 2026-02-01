@@ -24,18 +24,51 @@
   border-radius: var(--radius-lg);
   border: 4px solid transparent;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-3xl);
+  position: relative;
   cursor: pointer;
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-md);
+  padding: var(--spacing-sm);
 }
 
 .animalCard:hover {
   border-color: var(--pastel-purple);
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+
+.animalImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: filter 0.2s ease;
+}
+
+.animalCard:hover .animalImage {
+  filter: brightness(1.1);
+}
+
+.animalName {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 4px 12px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.animalCard:hover .animalName {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {

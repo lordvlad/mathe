@@ -6,15 +6,15 @@ interface AnimalSelectorProps {
   onSelect: (animal: CompanionAnimal) => void;
 }
 
-const ANIMALS: { animal: CompanionAnimal; emoji: string }[] = [
-  { animal: 'rabbit', emoji: '🐰' },
-  { animal: 'bear', emoji: '🐻' },
-  { animal: 'fox', emoji: '🦊' },
-  { animal: 'dog', emoji: '🐶' },
-  { animal: 'cat', emoji: '🐱' },
-  { animal: 'panda', emoji: '🐼' },
-  { animal: 'koala', emoji: '🐨' },
-  { animal: 'lion', emoji: '🦁' },
+const ANIMALS: { animal: CompanionAnimal; name: string; image: string }[] = [
+  { animal: 'rabbit', name: 'Hase', image: '/assets/animals/rabbit.png' },
+  { animal: 'bear', name: 'Bär', image: '/assets/animals/bear.png' },
+  { animal: 'fox', name: 'Fuchs', image: '/assets/animals/fox.png' },
+  { animal: 'dog', name: 'Hund', image: '/assets/animals/dog.png' },
+  { animal: 'cat', name: 'Katze', image: '/assets/animals/cat.png' },
+  { animal: 'panda', name: 'Panda', image: '/assets/animals/panda.png' },
+  { animal: 'koala', name: 'Koala', image: '/assets/animals/koala.png' },
+  { animal: 'lion', name: 'Löwe', image: '/assets/animals/lion.png' },
 ];
 
 const containerVariants = {
@@ -43,7 +43,7 @@ export function AnimalSelector({ onSelect }: AnimalSelectorProps) {
         initial="hidden"
         animate="visible"
       >
-        {ANIMALS.map(({ animal, emoji }) => (
+        {ANIMALS.map(({ animal, name, image }) => (
           <motion.button
             key={animal}
             className={styles.animalCard}
@@ -51,8 +51,10 @@ export function AnimalSelector({ onSelect }: AnimalSelectorProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onSelect(animal)}
+            aria-label={`Wähle ${name}`}
           >
-            {emoji}
+            <img src={image} alt={name} className={styles.animalImage} />
+            <span className={styles.animalName}>{name}</span>
           </motion.button>
         ))}
       </motion.div>

@@ -6,15 +6,15 @@ interface CompanionAnimalProps {
   emotion: AnimalEmotion;
 }
 
-const ANIMAL_EMOJI: Record<CompanionAnimal, string> = {
-  rabbit: '🐰',
-  bear: '🐻',
-  fox: '🦊',
-  dog: '🐶',
-  cat: '🐱',
-  panda: '🐼',
-  koala: '🐨',
-  lion: '🦁',
+const ANIMAL_IMAGES: Record<CompanionAnimal, string> = {
+  rabbit: '/assets/animals/rabbit.png',
+  bear: '/assets/animals/bear.png',
+  fox: '/assets/animals/fox.png',
+  dog: '/assets/animals/dog.png',
+  cat: '/assets/animals/cat.png',
+  panda: '/assets/animals/panda.png',
+  koala: '/assets/animals/koala.png',
+  lion: '/assets/animals/lion.png',
 };
 
 const getEmotionAnimation = (emotion: AnimalEmotion) => {
@@ -51,10 +51,22 @@ const getEmotionAnimation = (emotion: AnimalEmotion) => {
 export function CompanionAnimal({ animal, emotion }: CompanionAnimalProps) {
   return (
     <motion.div
-      style={{ fontSize: '64px', display: 'inline-block' }}
+      style={{ 
+        width: '128px', 
+        height: '128px',
+        display: 'inline-block' 
+      }}
       animate={getEmotionAnimation(emotion)}
     >
-      {ANIMAL_EMOJI[animal]}
+      <img 
+        src={ANIMAL_IMAGES[animal]} 
+        alt={animal}
+        style={{ 
+          width: '100%', 
+          height: '100%',
+          objectFit: 'contain'
+        }}
+      />
     </motion.div>
   );
 }

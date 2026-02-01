@@ -16,7 +16,12 @@
   margin-bottom: var(--spacing-xl);
 }
 
-.animalLarge,
+.animalLarge {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
 .treatLarge {
   font-size: 80px;
 }
@@ -39,7 +44,11 @@
 }
 
 @media (max-width: 768px) {
-  .animalLarge,
+  .animalLarge {
+    width: 90px;
+    height: 90px;
+  }
+  
   .treatLarge {
     font-size: 60px;
   }

@@ -1,0 +1,6 @@
+# Math game companion animals - watercolor style with rainbow variety
+dog:cute friendly dog character, happy cheerful expression, hand-drawn watercolor illustration style, sunny yellow and gold colors, soft brush strokes, children's book art, white background, centered, front facing view, 512x512
+cat:cute friendly cat character, happy cheerful expression, hand-drawn watercolor illustration style, lavender purple and white colors, soft brush strokes, children's book art, white background, centered, front facing view, 512x512
+panda:cute friendly panda character, happy cheerful expression, hand-drawn watercolor illustration style, black and white with mint green accents, soft brush strokes, children's book art, white background, centered, front facing view, 512x512
+koala:cute friendly koala character, happy cheerful expression, hand-drawn watercolor illustration style, soft gray and eucalyptus green colors, soft brush strokes, children's book art, white background, centered, front facing view, 512x512
+lion:cute friendly lion character, happy cheerful expression, hand-drawn watercolor illustration style, golden amber and peach colors with flowing mane, soft brush strokes, children's book art, white background, centered, front facing view, 512x512
