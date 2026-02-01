@@ -21,6 +21,7 @@ const INITIAL_DIFFICULTY: Difficulty = {
   previous: { min: 1, max: 20 },
   comparison: { min: 1, max: 20 },
   pattern: { min: 1, max: 10, step: 1 },
+  oddOneOut: { min: 10, max: 30 },
 };
 
 /**

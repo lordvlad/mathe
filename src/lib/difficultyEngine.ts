@@ -75,6 +75,10 @@ export function calculateDifficulty(
       max: Math.min(50, currentDifficulty.pattern.max + (adjustment === 'increase' ? 2 : -2)),
       step: currentDifficulty.pattern.step, // Keep step consistent for patterns
     },
+    oddOneOut: {
+      min: Math.max(10, currentDifficulty.oddOneOut.min + (adjustment === 'increase' ? 2 : -2)),
+      max: Math.min(100, currentDifficulty.oddOneOut.max + (adjustment === 'increase' ? 3 : -3)),
+    },
   };
 }
 

@@ -35,7 +35,7 @@ export function Game() {
   // Generate first problem when session starts
   useEffect(() => {
     if (isSessionActive && !currentProblem && sessionProgress < 10) {
-      const problemType = getRandomProblemType();
+      const problemType = getRandomProblemType(difficulty);
       const problem = generateProblem(problemType, difficulty);
       setCurrentProblem(problem);
       setStartTime(Date.now());

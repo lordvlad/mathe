@@ -250,6 +250,93 @@ function generatePattern(difficulty: Difficulty['pattern']): Problem {
 }
 
 /**
+ * Generate "odd one out" problem
+ * Find the number that doesn't fit the pattern
+ * Only available at higher difficulties (max >= 25)
+ */
+function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
+  // Different pattern types based on difficulty
+  let numbers: number[];
+  let oddOne: number;
+  let hint: string;
+  
+  if (difficulty.max >= 50) {
+    // Very advanced: divisibility patterns
+    const divisor = [2, 3, 5][randomInt(0, 2)]!;
+    const base = randomInt(10, 30);
+    
+    // Generate 4 numbers divisible by divisor, 1 that isn't
+    numbers = [
+      base * divisor,
+      (base + 1) * divisor,
+      (base + 2) * divisor,
+      (base + 3) * divisor,
+      (base * divisor) + 1, // The odd one
+    ];
+    oddOne = numbers[4]!;
+    hint = ` (Welche Zahl passt nicht?)`;
+  } else if (difficulty.max >= 35) {
+    // Advanced: tens/ones digit patterns
+    const useOnesDigit = Math.random() < 0.5;
+    
+    if (useOnesDigit) {
+      // All end with same digit except one
+      const digit = randomInt(1, 9);
+      const base = randomInt(10, 40);
+      
+      numbers = [
+        base + digit,
+        base + 10 + digit,
+        base + 20 + digit,
+        base + 30 + digit,
+        base + 15 + ((digit + 3) % 10), // Different ending
+      ];
+      oddOne = numbers[4]!;
+      hint = ` (Alle enden mit ${digit}, außer...)`;
+    } else {
+      // All in same tens range except one
+      const tens = randomInt(2, 5) * 10;
+      numbers = [
+        tens + randomInt(1, 9),
+        tens + randomInt(1, 9),
+        tens + randomInt(1, 9),
+        tens + randomInt(1, 9),
+        tens + 20 + randomInt(1, 9), // Different tens
+      ];
+      oddOne = numbers[4]!;
+      hint = ` (Welche Zahl passt nicht?)`;
+    }
+  } else {
+    // Beginner: simple ending digit pattern
+    const digit = randomInt(0, 9);
+    const base = randomInt(10, 25);
+    
+    numbers = [
+      base + digit,
+      base + 10 + digit,
+      base + 20 + digit,
+      base + 30 + digit,
+      base + 15 + ((digit + 4) % 10), // Different ending
+    ];
+    oddOne = numbers[4]!;
+    hint = ` (Welche passt nicht?)`;
+  }
+  
+  // Shuffle the numbers
+  const shuffled = shuffle([...numbers]);
+  
+  const question = `${shuffled.join(', ')}${hint}`;
+  const options = shuffled;
+  
+  return {
+    type: 'oddOneOut',
+    question,
+    answer: oddOne,
+    options,
+  };
+}
+
+/**
  * Main problem generator
  * Generates a math problem based on type and difficulty
  * 
@@ -273,6 +360,8 @@ export function generateProblem(type: ProblemType, difficulty: Difficulty): Prob
       return generateComparison(difficulty.comparison);
     case 'pattern':
       return generatePattern(difficulty.pattern);
+    case 'oddOneOut':
+      return generateOddOneOut(difficulty.oddOneOut);
     default:
       throw new Error(`Unknown problem type: ${type}`);
   }
@@ -280,8 +369,9 @@ export function generateProblem(type: ProblemType, difficulty: Difficulty): Prob
 
 /**
  * Get a random problem type
+ * Only includes oddOneOut at higher difficulties (max >= 25)
  */
-export function getRandomProblemType(): ProblemType {
+export function getRandomProblemType(difficulty?: Difficulty): ProblemType {
   const types: ProblemType[] = [
     'addition',
     'subtraction',
@@ -291,6 +381,11 @@ export function getRandomProblemType(): ProblemType {
     'comparison',
     'pattern',
   ];
+  
+  // Add oddOneOut only at higher difficulties
+  if (difficulty && difficulty.oddOneOut.max >= 25) {
+    types.push('oddOneOut');
+  }
   
   return types[randomInt(0, types.length - 1)]!;
 }

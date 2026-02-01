@@ -8,7 +8,8 @@ export type ProblemType =
   | 'next'
   | 'previous'
   | 'comparison'
-  | 'pattern';
+  | 'pattern'
+  | 'oddOneOut';
 
 /**
  * Available companion animals
@@ -34,6 +35,7 @@ export interface Difficulty {
   previous: { min: number; max: number };
   comparison: { min: number; max: number };
   pattern: { min: number; max: number; step: number };
+  oddOneOut: { min: number; max: number };
 }
 
 /**
