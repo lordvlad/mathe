@@ -150,6 +150,15 @@ export const useGameStore = create<GameStore>()(
         difficulty: state.difficulty,
         performanceHistory: state.performanceHistory,
       }),
+      // Migrate old saved states to add new problem types
+      migrate: (persistedState: any, version: number) => {
+        // Add oddOneOut difficulty if it doesn't exist (for backwards compatibility)
+        if (persistedState.difficulty && !persistedState.difficulty.oddOneOut) {
+          persistedState.difficulty.oddOneOut = { min: 10, max: 30 };
+        }
+        return persistedState;
+      },
+      version: 1,
     }
   )
 );

@@ -382,8 +382,8 @@ export function getRandomProblemType(difficulty?: Difficulty): ProblemType {
     'pattern',
   ];
   
-  // Add oddOneOut only at higher difficulties
-  if (difficulty && difficulty.oddOneOut.max >= 25) {
+  // Add oddOneOut only at higher difficulties (check if it exists first for backwards compatibility)
+  if (difficulty && difficulty.oddOneOut && difficulty.oddOneOut.max >= 25) {
     types.push('oddOneOut');
   }
   
