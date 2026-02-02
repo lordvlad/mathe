@@ -17,8 +17,20 @@
 }
 
 .animalDisplay {
-  font-size: 100px;
-  margin-bottom: var(--spacing-lg);
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animalImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .greeting {

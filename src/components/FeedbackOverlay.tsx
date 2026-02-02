@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import styles from './FeedbackOverlay.module.css';
+import { uiAssets } from '@/assets';
 
 interface FeedbackOverlayProps {
   correct: boolean;
@@ -49,7 +50,7 @@ export function FeedbackOverlay({ correct, shouldCelebrate, onContinue }: Feedba
               animate={{ scale: 1, rotate: 360 }}
               transition={{ delay: 0.2 }}
             >
-              ✓
+              <img src={uiAssets.thumbsUp} alt="Correct" style={{ width: '80px', height: '80px' }} />
             </motion.div>
           )}
           
@@ -70,7 +71,9 @@ export function FeedbackOverlay({ correct, shouldCelebrate, onContinue }: Feedba
                   transition={{ duration: 1, delay: i * 0.05 }}
                 />
               ))}
-              <div className={styles.partyPopper}>🎉</div>
+              <div className={styles.partyPopper}>
+                <img src={uiAssets.confetti} alt="Party" style={{ width: '60px', height: '60px' }} />
+              </div>
             </div>
           )}
         </motion.div>

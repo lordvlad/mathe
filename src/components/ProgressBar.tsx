@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { CompanionAnimal } from '@/types';
 import styles from './ProgressBar.module.css';
+import { animalAssets, treatAssets } from '@/assets';
 
 interface ProgressBarProps {
   current: number;
@@ -8,17 +9,6 @@ interface ProgressBarProps {
   animal: CompanionAnimal;
   treat: string;
 }
-
-const ANIMAL_EMOJI: Record<CompanionAnimal, string> = {
-  rabbit: '🐰',
-  bear: '🐻',
-  fox: '🦊',
-  dog: '🐶',
-  cat: '🐱',
-  panda: '🐼',
-  koala: '🐨',
-  lion: '🦁',
-};
 
 export function ProgressBar({ current, total, animal, treat }: ProgressBarProps) {
   // Calculate percentage (0-100)
@@ -38,10 +28,16 @@ export function ProgressBar({ current, total, animal, treat }: ProgressBarProps)
           animate={{ left: `${animalPosition}%` }}
           transition={{ type: 'spring', stiffness: 100, damping: 15 }}
         >
-          {ANIMAL_EMOJI[animal]}
+          <img src={animalAssets[animal]} alt={animal} className={styles.animalImage} />
         </motion.div>
         
-        <div className={styles.treat}>{treat}</div>
+        <div className={styles.treat}>
+          {treatAssets[treat as keyof typeof treatAssets] ? (
+            <img src={treatAssets[treat as keyof typeof treatAssets]} alt={treat} className={styles.treatImage} />
+          ) : (
+            <span>{treat}</span>
+          )}
+        </div>
       </div>
       
       <div className={styles.progressText}>

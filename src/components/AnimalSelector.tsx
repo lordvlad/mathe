@@ -1,20 +1,21 @@
 import { motion } from 'framer-motion';
 import type { CompanionAnimal } from '@/types';
 import styles from './AnimalSelector.module.css';
+import { animalAssets } from '@/assets';
 
 interface AnimalSelectorProps {
   onSelect: (animal: CompanionAnimal) => void;
 }
 
-const ANIMALS: { animal: CompanionAnimal; name: string; image: string }[] = [
-  { animal: 'rabbit', name: 'Hase', image: './assets/animals/rabbit.png' },
-  { animal: 'bear', name: 'Bär', image: './assets/animals/bear.png' },
-  { animal: 'fox', name: 'Fuchs', image: './assets/animals/fox.png' },
-  { animal: 'dog', name: 'Hund', image: './assets/animals/dog.png' },
-  { animal: 'cat', name: 'Katze', image: './assets/animals/cat.png' },
-  { animal: 'panda', name: 'Panda', image: './assets/animals/panda.png' },
-  { animal: 'koala', name: 'Koala', image: './assets/animals/koala.png' },
-  { animal: 'lion', name: 'Löwe', image: './assets/animals/lion.png' },
+const ANIMALS: { animal: CompanionAnimal; name: string }[] = [
+  { animal: 'rabbit', name: 'Hase' },
+  { animal: 'bear', name: 'Bär' },
+  { animal: 'fox', name: 'Fuchs' },
+  { animal: 'dog', name: 'Hund' },
+  { animal: 'cat', name: 'Katze' },
+  { animal: 'panda', name: 'Panda' },
+  { animal: 'koala', name: 'Koala' },
+  { animal: 'lion', name: 'Löwe' },
 ];
 
 const containerVariants = {
@@ -43,7 +44,7 @@ export function AnimalSelector({ onSelect }: AnimalSelectorProps) {
         initial="hidden"
         animate="visible"
       >
-        {ANIMALS.map(({ animal, name, image }) => (
+        {ANIMALS.map(({ animal, name }) => (
           <motion.button
             key={animal}
             className={styles.animalCard}
@@ -53,7 +54,7 @@ export function AnimalSelector({ onSelect }: AnimalSelectorProps) {
             onClick={() => onSelect(animal)}
             aria-label={`Wähle ${name}`}
           >
-            <img src={image} alt={name} className={styles.animalImage} />
+            <img src={animalAssets[animal]} alt={name} className={styles.animalImage} />
             <span className={styles.animalName}>{name}</span>
           </motion.button>
         ))}

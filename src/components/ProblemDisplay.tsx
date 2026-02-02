@@ -2,23 +2,13 @@ import { motion } from 'framer-motion';
 import type { Problem, CompanionAnimal } from '@/types';
 import { Button } from './Button';
 import styles from './ProblemDisplay.module.css';
+import { animalAssets } from '@/assets';
 
 interface ProblemDisplayProps {
   problem: Problem;
   animal: CompanionAnimal;
   onAnswer: (answer: number) => void;
 }
-
-const ANIMAL_EMOJI: Record<CompanionAnimal, string> = {
-  rabbit: '🐰',
-  bear: '🐻',
-  fox: '🦊',
-  dog: '🐶',
-  cat: '🐱',
-  panda: '🐼',
-  koala: '🐨',
-  lion: '🦁',
-};
 
 export function ProblemDisplay({ problem, animal, onAnswer }: ProblemDisplayProps) {
   return (
@@ -33,7 +23,7 @@ export function ProblemDisplay({ problem, animal, onAnswer }: ProblemDisplayProp
         animate={{ y: [0, -8, 0] }}
         transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
       >
-        {ANIMAL_EMOJI[animal]}
+        <img src={animalAssets[animal]} alt={animal} className={styles.companionImage} />
       </motion.div>
       
       <div className={styles.question}>{problem.question}</div>

@@ -3,6 +3,7 @@ import type { CompanionAnimal } from '@/types';
 import { Button } from './Button';
 import { AnimalSelector } from './AnimalSelector';
 import styles from './WelcomeScreen.module.css';
+import { animalAssets, backgroundAssets } from '@/assets';
 
 interface WelcomeScreenProps {
   selectedAnimal: CompanionAnimal | null;
@@ -10,15 +11,15 @@ interface WelcomeScreenProps {
   onStartSession: () => void;
 }
 
-const ANIMAL_EMOJI: Record<CompanionAnimal, string> = {
-  rabbit: '🐰',
-  bear: '🐻',
-  fox: '🦊',
-  dog: '🐶',
-  cat: '🐱',
-  panda: '🐼',
-  koala: '🐨',
-  lion: '🦁',
+const ANIMAL_NAMES: Record<CompanionAnimal, string> = {
+  rabbit: 'Hase',
+  bear: 'Bär',
+  fox: 'Fuchs',
+  dog: 'Hund',
+  cat: 'Katze',
+  panda: 'Panda',
+  koala: 'Koala',
+  lion: 'Löwe',
 };
 
 export function WelcomeScreen({
@@ -31,8 +32,16 @@ export function WelcomeScreen({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        style={{ 
+          backgroundImage: `url(${backgroundAssets.welcome})`,
+          backgroundSize: 'cover',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
       >
-        <h1 className={styles.title}>Lass uns Mathe üben!</h1>
         <AnimalSelector onSelect={onSelectAnimal} />
       </motion.div>
     );
@@ -43,20 +52,24 @@ export function WelcomeScreen({
       className={styles.container}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
+      style={{ 
+        backgroundImage: `url(${backgroundAssets.welcome})`,
+        backgroundSize: 'cover',
+      }}
     >
       <motion.div
         className={styles.animalDisplay}
         animate={{ y: [0, -10, 0] }}
         transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
       >
-        {ANIMAL_EMOJI[selectedAnimal]}
+        <img src={animalAssets[selectedAnimal]} alt={selectedAnimal} className={styles.animalImage} />
       </motion.div>
       
       <h1 className={styles.greeting}>
-        Willkommen zurück {ANIMAL_EMOJI[selectedAnimal]}!
+        Willkommen zurück!
       </h1>
       
-      <p className={styles.message}>Bereit für Mathe-Spaß?</p>
+      <p className={styles.message}>Bereit für Mathe-Spaß mit deinem Freund, dem {ANIMAL_NAMES[selectedAnimal]}?</p>
       
       <Button onClick={onStartSession}>Los geht's</Button>
     </motion.div>

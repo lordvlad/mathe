@@ -3,6 +3,7 @@ import type { CompanionAnimal } from '@/types';
 import { Button } from './Button';
 import { Confetti } from './Confetti';
 import styles from './SessionComplete.module.css';
+import { animalAssets, treatAssets, backgroundAssets } from '@/assets';
 
 interface SessionCompleteProps {
   correctCount: number;
@@ -10,17 +11,6 @@ interface SessionCompleteProps {
   animal: CompanionAnimal;
   onPlayAgain: () => void;
 }
-
-const ANIMAL_IMAGES: Record<CompanionAnimal, string> = {
-  rabbit: './assets/animals/rabbit.png',
-  bear: './assets/animals/bear.png',
-  fox: './assets/animals/fox.png',
-  dog: './assets/animals/dog.png',
-  cat: './assets/animals/cat.png',
-  panda: './assets/animals/panda.png',
-  koala: './assets/animals/koala.png',
-  lion: './assets/animals/lion.png',
-};
 
 export function SessionComplete({
   correctCount,
@@ -33,7 +23,18 @@ export function SessionComplete({
   const isGreat = correctCount >= 8;
   
   return (
-    <>
+    <div 
+      style={{ 
+        backgroundImage: `url(${backgroundAssets.celebration})`,
+        backgroundSize: 'cover',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
+      }}
+    >
       <Confetti count={isPerfect ? 100 : 60} />
       
       {/* Fireworks effect for perfect score */}
@@ -81,7 +82,7 @@ export function SessionComplete({
           transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
         >
           <motion.img 
-            src={ANIMAL_IMAGES[animal]} 
+            src={animalAssets[animal]} 
             alt="celebration" 
             className={styles.animalLarge}
             animate={{
@@ -121,7 +122,13 @@ export function SessionComplete({
             >
               ✨
             </motion.div>
-            <div className={styles.treatLarge}>{treat}</div>
+            <div className={styles.treatLarge}>
+              {treatAssets[treat as keyof typeof treatAssets] ? (
+                <img src={treatAssets[treat as keyof typeof treatAssets]} alt={treat} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+              ) : (
+                <span>{treat}</span>
+              )}
+            </div>
             <motion.div
               className={styles.sparkleRight}
               animate={{
@@ -181,6 +188,6 @@ export function SessionComplete({
           <Button onClick={onPlayAgain}>Nochmal spielen</Button>
         </motion.div>
       </motion.div>
-    </>
+    </div>
   );
 }

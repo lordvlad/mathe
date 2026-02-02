@@ -1,23 +1,13 @@
 import { motion } from 'framer-motion';
 import type { CompanionAnimal } from '@/types';
 import styles from './HalfwayCelebration.module.css';
+import { animalAssets, treatAssets } from '@/assets';
 
 interface HalfwayCelebrationProps {
   animal: CompanionAnimal;
   treat: string;
   onContinue: () => void;
 }
-
-const ANIMAL_IMAGES: Record<CompanionAnimal, string> = {
-  rabbit: './assets/animals/rabbit.png',
-  bear: './assets/animals/bear.png',
-  fox: './assets/animals/fox.png',
-  dog: './assets/animals/dog.png',
-  cat: './assets/animals/cat.png',
-  panda: './assets/animals/panda.png',
-  koala: './assets/animals/koala.png',
-  lion: './assets/animals/lion.png',
-};
 
 export function HalfwayCelebration({
   animal,
@@ -52,7 +42,7 @@ export function HalfwayCelebration({
           }}
         >
           <img
-            src={ANIMAL_IMAGES[animal]}
+            src={animalAssets[animal]}
             alt="Excited animal"
             className={styles.animal}
           />
@@ -90,7 +80,7 @@ export function HalfwayCelebration({
         >
           <h1 className={styles.heading}>Halbzeit! 🎉</h1>
           <p className={styles.encouragement}>
-            Super gemacht! Noch 5 Aufgaben bis zum {treat}!
+            Super gemacht! Noch 5 Aufgaben bis zum Leckerbissen!
           </p>
         </motion.div>
 
@@ -120,7 +110,13 @@ export function HalfwayCelebration({
           >
             ✨
           </motion.div>
-          <span className={styles.treat}>{treat}</span>
+          <div className={styles.treat}>
+            {treatAssets[treat as keyof typeof treatAssets] ? (
+              <img src={treatAssets[treat as keyof typeof treatAssets]} alt={treat} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+            ) : (
+              <span>{treat}</span>
+            )}
+          </div>
           <motion.div
             className={styles.sparkle}
             animate={{

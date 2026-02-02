@@ -1,3 +1,6 @@
-[serve.static]
-env = "BUN_PUBLIC_*"
-plugins = ["./lightningcss.ts"]
+[plugin]
+"bun-lightningcss" = { import = "./lightningcss.ts" }
+
+[test]
+# Bun test configuration - run unit tests only
+root = "src"

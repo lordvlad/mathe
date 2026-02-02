@@ -1,21 +1,11 @@
 import { motion } from 'framer-motion';
 import type { CompanionAnimal, AnimalEmotion } from '@/types';
+import { animalAssets } from '@/assets';
 
 interface CompanionAnimalProps {
   animal: CompanionAnimal;
   emotion: AnimalEmotion;
 }
-
-const ANIMAL_IMAGES: Record<CompanionAnimal, string> = {
-  rabbit: './assets/animals/rabbit.png',
-  bear: './assets/animals/bear.png',
-  fox: './assets/animals/fox.png',
-  dog: './assets/animals/dog.png',
-  cat: './assets/animals/cat.png',
-  panda: './assets/animals/panda.png',
-  koala: './assets/animals/koala.png',
-  lion: './assets/animals/lion.png',
-};
 
 const getEmotionAnimation = (emotion: AnimalEmotion) => {
   switch (emotion) {
@@ -59,12 +49,13 @@ export function CompanionAnimal({ animal, emotion }: CompanionAnimalProps) {
       animate={getEmotionAnimation(emotion)}
     >
       <img 
-        src={ANIMAL_IMAGES[animal]} 
+        src={animalAssets[animal]} 
         alt={animal}
         style={{ 
           width: '100%', 
           height: '100%',
-          objectFit: 'contain'
+          objectFit: 'contain',
+          mixBlendMode: 'multiply'
         }}
       />
     </motion.div>

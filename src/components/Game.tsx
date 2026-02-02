@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
 import { generateProblem, getRandomProblemType } from '@/lib/problemGenerator';
 import { createSession, checkAnswer } from '@/lib/sessionManager';
@@ -9,6 +10,7 @@ import { ProblemDisplay } from './ProblemDisplay';
 import { FeedbackOverlay } from './FeedbackOverlay';
 import { HalfwayCelebration } from './HalfwayCelebration';
 import { SessionComplete } from './SessionComplete';
+import { backgroundAssets } from '@/assets';
 
 export function Game() {
   const {
@@ -138,7 +140,19 @@ export function Game() {
   }
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={{ 
+        backgroundImage: `url(${backgroundAssets.game})`,
+        backgroundSize: 'cover',
+        minHeight: '100vh',
+        padding: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
+    >
       {currentSession && (
         <ProgressBar
           current={sessionProgress}
@@ -171,6 +185,6 @@ export function Game() {
           onContinue={handleHalfwayContinue}
         />
       )}
-    </>
+    </motion.div>
   );
 }
