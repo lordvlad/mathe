@@ -151,14 +151,14 @@ export function Game() {
         position: 'relative'
       }}
     >
-      {/* Semi-transparent white overlay to improve readability */}
+      {/* Light overlay to improve readability */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
         zIndex: 0
       }} />
       
@@ -166,11 +166,12 @@ export function Game() {
       <div style={{
         position: 'relative',
         zIndex: 1,
-        padding: '2rem',
+        padding: '1rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        minHeight: '100vh'
+        minHeight: '100vh',
+        boxSizing: 'border-box'
       }}>
         {currentProblem && currentSession && selectedAnimal && (
           <ProblemDisplay

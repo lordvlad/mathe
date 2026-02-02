@@ -39,14 +39,14 @@ export function WelcomeScreen({
           position: 'relative'
         }}
       >
-        {/* Semi-transparent white overlay to improve readability */}
+        {/* Light overlay to improve readability */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backgroundColor: 'rgba(255, 255, 255, 0.3)',
           zIndex: 0
         }} />
         
@@ -80,14 +80,14 @@ export function WelcomeScreen({
         justifyContent: 'center'
       }}
     >
-      {/* Semi-transparent white overlay to improve readability */}
+      {/* Light overlay to improve readability */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
         zIndex: 0
       }} />
       

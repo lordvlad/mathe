@@ -4,7 +4,7 @@
   padding: 0;
   box-shadow: var(--shadow-lg);
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
   max-width: 600px;
   width: 100%;
 }
