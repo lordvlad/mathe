@@ -39,11 +39,17 @@ export async function setGameState(page: Page, state: any) {
 
 /**
  * Helper to clear game state from localStorage
+ * Safe to call before navigation - will be no-op if page not ready
  */
 export async function clearGameState(page: Page) {
-  await page.evaluate(() => {
-    localStorage.removeItem('game-store');
-  });
+  try {
+    await page.evaluate(() => {
+      localStorage.removeItem('game-store');
+    });
+  } catch (error) {
+    // Ignore errors if localStorage not accessible yet (page not loaded)
+    // This is expected when called in beforeEach before goto()
+  }
 }
 
 /**

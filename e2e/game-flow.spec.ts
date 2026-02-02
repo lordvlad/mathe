@@ -7,14 +7,12 @@ import {
 } from './helpers';
 
 test.describe('Math Game Complete Flow', () => {
-  test.beforeEach(async ({ page }) => {
-    // Clear localStorage before each test for clean state
-    await clearGameState(page);
-  });
-
   test('should complete a full game session with all correct answers', async ({ page }) => {
     // 1. Navigate to the game
     await page.goto('/');
+    
+    // Clear any existing state
+    await clearGameState(page);
     
     // 2. Welcome screen should be visible
     await expect(page.getByText('Wähle deinen Freund!')).toBeVisible();
