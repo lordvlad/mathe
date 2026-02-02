@@ -5,7 +5,6 @@ import { generateProblem, getRandomProblemType } from '@/lib/problemGenerator';
 import { createSession, checkAnswer } from '@/lib/sessionManager';
 import { calculateDifficulty, shouldCelebrate } from '@/lib/difficultyEngine';
 import { WelcomeScreen } from './WelcomeScreen';
-import { ProgressBar } from './ProgressBar';
 import { ProblemDisplay } from './ProblemDisplay';
 import { FeedbackOverlay } from './FeedbackOverlay';
 import { HalfwayCelebration } from './HalfwayCelebration';
@@ -145,7 +144,9 @@ export function Game() {
       animate={{ opacity: 1 }}
       style={{ 
         backgroundImage: `url(${backgroundAssets.game})`,
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         minHeight: '100vh',
         position: 'relative'
       }}
@@ -171,20 +172,14 @@ export function Game() {
         alignItems: 'center',
         minHeight: '100vh'
       }}>
-        {currentSession && (
-          <ProgressBar
-            current={sessionProgress}
-            total={currentSession.totalProblems}
-            animal={selectedAnimal}
-            treat={currentSession.treat}
-          />
-        )}
-        
-        {currentProblem && (
+        {currentProblem && currentSession && selectedAnimal && (
           <ProblemDisplay
             problem={currentProblem}
             animal={selectedAnimal}
             onAnswer={handleAnswer}
+            currentProgress={sessionProgress}
+            totalProblems={currentSession.totalProblems}
+            treat={currentSession.treat}
           />
         )}
         

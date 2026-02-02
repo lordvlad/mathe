@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Problem, CompanionAnimal } from '@/types';
 import { Button } from './Button';
+import { ProgressBar } from './ProgressBar';
 import styles from './ProblemDisplay.module.css';
 import { animalAssets } from '@/assets';
 
@@ -8,9 +9,19 @@ interface ProblemDisplayProps {
   problem: Problem;
   animal: CompanionAnimal;
   onAnswer: (answer: number) => void;
+  currentProgress: number;
+  totalProblems: number;
+  treat: string;
 }
 
-export function ProblemDisplay({ problem, animal, onAnswer }: ProblemDisplayProps) {
+export function ProblemDisplay({ 
+  problem, 
+  animal, 
+  onAnswer, 
+  currentProgress, 
+  totalProblems, 
+  treat 
+}: ProblemDisplayProps) {
   return (
     <motion.div
       className={styles.container}
@@ -18,6 +29,14 @@ export function ProblemDisplay({ problem, animal, onAnswer }: ProblemDisplayProp
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 100 }}
     >
+      {/* Progress bar at the top of the card */}
+      <ProgressBar
+        current={currentProgress}
+        total={totalProblems}
+        animal={animal}
+        treat={treat}
+      />
+      
       <motion.div
         className={styles.companion}
         animate={{ y: [0, -8, 0] }}

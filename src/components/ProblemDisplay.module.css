@@ -1,9 +1,35 @@
 .container {
   background: white;
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
+  padding: 0;
   box-shadow: var(--shadow-lg);
   text-align: center;
+  overflow: hidden;
+  max-width: 600px;
+  width: 100%;
+}
+
+.container > * {
+  padding: 0 var(--spacing-xl);
+}
+
+.container > *:first-child {
+  padding: 0;
+}
+
+.container > *:last-child {
+  padding-bottom: var(--spacing-xl);
+}
+
+.companion,
+.question,
+.countingItems,
+.options {
+  padding: 0 var(--spacing-xl);
+}
+
+.companion {
+  padding-top: var(--spacing-lg);
 }
 
 .question {
