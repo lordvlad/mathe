@@ -33,38 +33,15 @@ export function WelcomeScreen({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         style={{ 
-          position: 'relative',
-          minHeight: '100vh',
-          backgroundColor: '#f5f5f5'
-        }}
-      >
-        {/* Background image with opacity */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `url(${backgroundAssets.welcome})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          opacity: 0.4,
-          zIndex: 0
-        }} />
-        
-        {/* Content wrapper */}
-        <div style={{
-          position: 'relative',
-          zIndex: 1,
-          minHeight: '100vh',
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+          justifyContent: 'center',
+          overflow: 'hidden'
+        }}
+      >
           <AnimalSelector onSelect={onSelectAnimal} />
-        </div>
       </motion.div>
     );
   }
@@ -74,31 +51,14 @@ export function WelcomeScreen({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       style={{ 
-        position: 'relative',
-        minHeight: '100vh',
+        height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f5f5f5'
+        overflow: 'hidden'
       }}
     >
-      {/* Background image with opacity */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: `url(${backgroundAssets.welcome})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 0.4,
-        zIndex: 0
-      }} />
-      
-      {/* Content wrapper */}
-      <div className={styles.container} style={{ position: 'relative', zIndex: 1 }}>
+      <div className={styles.container}>
         <motion.div
           className={styles.animalDisplay}
           animate={{ y: [0, -10, 0] }}

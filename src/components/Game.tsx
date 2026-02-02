@@ -143,37 +143,15 @@ export function Game() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ 
-        position: 'relative',
-        minHeight: '100vh',
-        backgroundColor: '#f5f5f5'
-      }}
-    >
-      {/* Background image with opacity */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: `url(${backgroundAssets.welcome})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 0.4,
-        zIndex: 0
-      }} />
-      
-      {/* Content wrapper */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        padding: '1rem',
+        padding: '1vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        minHeight: '100vh',
-        boxSizing: 'border-box'
-      }}>
+        height: '100%',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
+      }}
+    >
         {currentProblem && currentSession && selectedAnimal && (
           <ProblemDisplay
             problem={currentProblem}
@@ -200,7 +178,6 @@ export function Game() {
             onContinue={handleHalfwayContinue}
           />
         )}
-      </div>
     </motion.div>
   );
 }
