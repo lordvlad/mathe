@@ -258,7 +258,7 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
   // Different pattern types based on difficulty
   let numbers: number[];
   let oddOne: number;
-  let hint: string;
+  let questionText: string;
   
   if (difficulty.max >= 50) {
     // Very advanced: divisibility patterns
@@ -274,7 +274,7 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
       (base * divisor) + 1, // The odd one
     ];
     oddOne = numbers[4]!;
-    hint = ` (Welche Zahl passt nicht?)`;
+    questionText = 'Welche Zahl passt nicht?';
   } else if (difficulty.max >= 35) {
     // Advanced: tens/ones digit patterns
     const useOnesDigit = Math.random() < 0.5;
@@ -292,7 +292,7 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
         base + 15 + ((digit + 3) % 10), // Different ending
       ];
       oddOne = numbers[4]!;
-      hint = ` (Alle enden mit ${digit}, außer...)`;
+      questionText = `Alle enden mit ${digit}, außer...?`;
     } else {
       // All in same tens range except one
       const tens = randomInt(2, 5) * 10;
@@ -304,7 +304,7 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
         tens + 20 + randomInt(1, 9), // Different tens
       ];
       oddOne = numbers[4]!;
-      hint = ` (Welche Zahl passt nicht?)`;
+      questionText = 'Welche Zahl passt nicht?';
     }
   } else {
     // Beginner: simple ending digit pattern
@@ -319,13 +319,13 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
       base + 15 + ((digit + 4) % 10), // Different ending
     ];
     oddOne = numbers[4]!;
-    hint = ` (Welche passt nicht?)`;
+    questionText = 'Welche Zahl passt nicht?';
   }
   
   // Shuffle the numbers
   const shuffled = shuffle([...numbers]);
   
-  const question = `${shuffled.join(', ')}${hint}`;
+  const question = `${questionText}\n${shuffled.join(', ')}`;
   const options = shuffled;
   
   return {
