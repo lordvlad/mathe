@@ -2,11 +2,11 @@ import type { Page } from '@playwright/test';
 
 /**
  * Helper to get the current problem from the game store
- * This allows us to click the correct answer reliably
+ * Note: currentProblem is NOT persisted to localStorage
  */
 export async function getCurrentProblem(page: Page) {
   return await page.evaluate(() => {
-    const storeKey = 'game-store';
+    const storeKey = 'math-game-state';
     const storeData = localStorage.getItem(storeKey);
     if (!storeData) return null;
     
@@ -21,7 +21,7 @@ export async function getCurrentProblem(page: Page) {
  */
 export async function setGameState(page: Page, state: any) {
   await page.evaluate((stateData) => {
-    const storeKey = 'game-store';
+    const storeKey = 'math-game-state';
     const existingData = localStorage.getItem(storeKey);
     const existing = existingData ? JSON.parse(existingData) : {};
     
@@ -44,7 +44,7 @@ export async function setGameState(page: Page, state: any) {
 export async function clearGameState(page: Page) {
   try {
     await page.evaluate(() => {
-      localStorage.removeItem('game-store');
+      localStorage.removeItem('math-game-state');
     });
   } catch (error) {
     // Ignore errors if localStorage not accessible yet (page not loaded)
@@ -164,13 +164,18 @@ export async function clickCorrectAnswer(page: Page) {
   
   if (correctAnswer !== null) {
     const correctButton = page.getByRole('button', { name: String(correctAnswer), exact: true });
-    await correctButton.click({ force: true }); // Force click to bypass overlay checks
+    // Wait for button to be stable and clickable
+    await correctButton.waitFor({ state: 'visible', timeout: 3000 });
+    await page.waitForTimeout(100); // Brief pause for stability
+    await correctButton.click({ timeout: 5000 });
   } else {
     // Fallback: click the first button
     const buttons = await page.getByRole('button').all();
     const firstButton = buttons[0];
     if (firstButton) {
-      await firstButton.click({ force: true });
+      await firstButton.waitFor({ state: 'visible', timeout: 3000 });
+      await page.waitForTimeout(100);
+      await firstButton.click({ timeout: 5000 });
     }
   }
 }
@@ -181,7 +186,7 @@ export async function clickCorrectAnswer(page: Page) {
  */
 export async function clickIncorrectAnswer(page: Page) {
   // Wait for buttons to be visible
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(300);
   
   // Get all answer buttons
   const buttons = await page.getByRole('button').all();
@@ -189,7 +194,9 @@ export async function clickIncorrectAnswer(page: Page) {
   // Click the last button (usually incorrect)
   const lastButton = buttons[buttons.length - 1];
   if (lastButton) {
-    await lastButton.click({ force: true }); // Force click to bypass overlay checks
+    await lastButton.waitFor({ state: 'visible', timeout: 3000 });
+    await page.waitForTimeout(100);
+    await lastButton.click({ timeout: 5000 });
   } else {
     throw new Error('No answer buttons found');
   }
@@ -200,11 +207,31 @@ export async function clickIncorrectAnswer(page: Page) {
  * Returns a mock problem object for compatibility
  */
 export async function waitForProblem(page: Page, timeout = 10000) {
+  // Wait for any overlays to disappear first
+  await page.waitForFunction(() => {
+    const overlays = document.querySelectorAll('[class*="overlay"]');
+    return overlays.length === 0 || Array.from(overlays).every(el => {
+      const style = window.getComputedStyle(el);
+      return style.display === 'none' || style.opacity === '0' || style.visibility === 'hidden';
+    });
+  }, { timeout: 5000 }).catch(() => {
+    // Ignore timeout - overlay might not exist
+  });
+  
   // Wait for question to be visible
   await page.locator('text=/\\?|größer|viele|kommt|passt/').waitFor({ state: 'visible', timeout });
   
-  // Wait a bit for UI to stabilize
-  await page.waitForTimeout(300);
+  // Wait for buttons to be clickable
+  await page.waitForFunction(() => {
+    const buttons = document.querySelectorAll('button');
+    return buttons.length > 0 && Array.from(buttons).some(btn => {
+      const rect = btn.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && !btn.disabled;
+    });
+  }, { timeout: 3000 });
+  
+  // Extra wait for UI to stabilize
+  await page.waitForTimeout(200);
   
   // Return a mock problem for compatibility
   return {
