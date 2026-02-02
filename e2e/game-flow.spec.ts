@@ -27,8 +27,8 @@ test.describe('Math Game Complete Flow', () => {
     await expect(startButton).toBeVisible();
     await startButton.click();
     
-    // 5. Progress bar should be visible
-    await expect(page.getByText(/Aufgabe \d+ von 10/)).toBeVisible();
+    // 5. Progress bar should be visible (starts at 0)
+    await expect(page.getByText('0 von 10')).toBeVisible();
     
     // 6. Complete all 10 problems with correct answers
     for (let i = 1; i <= 10; i++) {
@@ -132,7 +132,7 @@ test.describe('Math Game Complete Flow', () => {
     
     // Should continue with question 6
     await waitForProblem(page);
-    await expect(page.getByText(/Aufgabe 6 von 10/)).toBeVisible();
+    await expect(page.getByText('6 von 10')).toBeVisible();
   });
 
   test('should display all 8 animals in selector', async ({ page }) => {
@@ -153,16 +153,16 @@ test.describe('Math Game Complete Flow', () => {
     await page.locator('[alt="Katze"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
-    // Check initial progress
-    await expect(page.getByText('Aufgabe 1 von 10')).toBeVisible();
+    // Check initial progress (starts at 0)
+    await expect(page.getByText('0 von 10')).toBeVisible();
     
     // Answer first question
     await waitForProblem(page);
     await clickCorrectAnswer(page);
     await page.waitForTimeout(2000);
     
-    // Progress should update to 2
-    await expect(page.getByText('Aufgabe 2 von 10')).toBeVisible();
+    // Progress should update to 1 (1 completed)
+    await expect(page.getByText('1 von 10')).toBeVisible();
   });
 
   test('should handle keyboard navigation', async ({ page }) => {
@@ -179,7 +179,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.keyboard.press('Enter');
     
     // Game should start
-    await expect(page.getByText(/Aufgabe \d+ von 10/)).toBeVisible();
+    await expect(page.getByText(/\d+ von 10/)).toBeVisible();
   });
 
   test('should persist state in localStorage', async ({ page }) => {
@@ -244,7 +244,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.locator('[alt="Hase"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
-    // Progress bar should be visible
-    await expect(page.getByText(/Aufgabe 1 von 10/)).toBeVisible();
+    // Progress bar should be visible (starts at 0)
+    await expect(page.getByText('0 von 10')).toBeVisible();
   });
 });
