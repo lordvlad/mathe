@@ -282,17 +282,26 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
     if (useOnesDigit) {
       // All end with same digit except one
       const digit = randomInt(1, 9);
-      const base = randomInt(10, 40);
+      const base1 = randomInt(1, 4) * 10;
+      const base2 = randomInt(1, 4) * 10;
+      const base3 = randomInt(1, 4) * 10;
+      const base4 = randomInt(1, 4) * 10;
       
+      // Generate 4 numbers ending with the target digit
       numbers = [
-        base + digit,
-        base + 10 + digit,
-        base + 20 + digit,
-        base + 30 + digit,
-        base + 15 + ((digit + 3) % 10), // Different ending
+        base1 + digit,
+        base2 + digit,
+        base3 + digit,
+        base4 + digit,
       ];
-      oddOne = numbers[4]!;
-      questionText = `Alle enden mit ${digit}, außer...?`;
+      
+      // Add one number ending with a different digit
+      const differentDigit = (digit + randomInt(1, 8)) % 10;
+      const oddBase = randomInt(1, 4) * 10;
+      oddOne = oddBase + differentDigit;
+      numbers.push(oddOne);
+      
+      questionText = `Alle enden mit ${digit}, außer...?\n`;
     } else {
       // All in same tens range except one
       const tens = randomInt(2, 5) * 10;
@@ -301,31 +310,44 @@ function generateOddOneOut(difficulty: Difficulty['oddOneOut']): Problem {
         tens + randomInt(1, 9),
         tens + randomInt(1, 9),
         tens + randomInt(1, 9),
-        tens + 20 + randomInt(1, 9), // Different tens
       ];
-      oddOne = numbers[4]!;
-      questionText = 'Welche Zahl passt nicht?';
+      
+      // Add one from a different tens range
+      const differentTens = (tens + randomInt(2, 4) * 10) % 100;
+      oddOne = differentTens + randomInt(1, 9);
+      numbers.push(oddOne);
+      
+      questionText = 'Welche Zahl passt nicht?\n';
     }
   } else {
     // Beginner: simple ending digit pattern
     const digit = randomInt(0, 9);
-    const base = randomInt(10, 25);
+    const base1 = randomInt(1, 3) * 10;
+    const base2 = randomInt(1, 3) * 10;
+    const base3 = randomInt(1, 3) * 10;
+    const base4 = randomInt(1, 3) * 10;
     
+    // Generate 4 numbers ending with the target digit
     numbers = [
-      base + digit,
-      base + 10 + digit,
-      base + 20 + digit,
-      base + 30 + digit,
-      base + 15 + ((digit + 4) % 10), // Different ending
+      base1 + digit,
+      base2 + digit,
+      base3 + digit,
+      base4 + digit,
     ];
-    oddOne = numbers[4]!;
-    questionText = 'Welche Zahl passt nicht?';
+    
+    // Add one number ending with a different digit
+    const differentDigit = (digit + randomInt(1, 8)) % 10;
+    const oddBase = randomInt(1, 3) * 10;
+    oddOne = oddBase + differentDigit;
+    numbers.push(oddOne);
+    
+    questionText = 'Welche Zahl passt nicht?\n';
   }
   
   // Shuffle the numbers
   const shuffled = shuffle([...numbers]);
   
-  const question = `${questionText}\n${shuffled.join(', ')}`;
+  const question = `${questionText}${shuffled.join(', ')}`;
   const options = shuffled;
   
   return {

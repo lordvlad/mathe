@@ -25,8 +25,10 @@ export function SessionComplete({
   return (
     <div 
       style={{ 
-        backgroundImage: `url(${backgroundAssets.celebration})`,
+        backgroundImage: `url(${backgroundAssets.welcome})`,
         backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         minHeight: '100vh',
         position: 'relative',
         width: '100%'

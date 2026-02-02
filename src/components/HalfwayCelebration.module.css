@@ -15,8 +15,9 @@
 .container {
   background: linear-gradient(135deg, #FFF9C4 0%, #FFE082 100%);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-xl);
   max-width: 500px;
+  max-height: 90vh;
   width: 90%;
   text-align: center;
   position: relative;
@@ -29,8 +30,8 @@
 }
 
 .animal {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
   mix-blend-mode: multiply;
@@ -90,7 +91,7 @@
 }
 
 .treat {
-  font-size: 4rem;
+  font-size: 3rem;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 

@@ -143,8 +143,8 @@ export function Game() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ 
-        backgroundImage: `url(${backgroundAssets.game})`,
-        backgroundSize: 'contain',
+        backgroundImage: `url(${backgroundAssets.welcome})`,
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         minHeight: '100vh',

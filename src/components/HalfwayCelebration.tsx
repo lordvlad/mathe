@@ -134,18 +134,7 @@ export function HalfwayCelebration({
         </motion.div>
 
         {/* Continue hint */}
-        <motion.p
-          className={styles.hint}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            delay: 1,
-          }}
-        >
-          Klicke um weiterzumachen
-        </motion.p>
+
       </motion.div>
     </motion.div>
   );
