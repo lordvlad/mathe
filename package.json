@@ -30,6 +30,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "bun-lightningcss": "^0.2.0",
-    "happy-dom": "^20.4.0"
+    "happy-dom": "^20.4.0",
+    "sharp": "^0.34.5"
   }
 }

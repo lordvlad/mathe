@@ -28,14 +28,32 @@ export function SessionComplete({
         backgroundImage: `url(${backgroundAssets.celebration})`,
         backgroundSize: 'cover',
         minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'relative',
         width: '100%'
       }}
     >
-      <Confetti count={isPerfect ? 100 : 60} />
+      {/* Semi-transparent white overlay to improve readability */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        zIndex: 0
+      }} />
+      
+      {/* Content wrapper */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Confetti count={isPerfect ? 100 : 60} />
       
       {/* Fireworks effect for perfect score */}
       {isPerfect && (
@@ -188,6 +206,7 @@ export function SessionComplete({
           <Button onClick={onPlayAgain}>Nochmal spielen</Button>
         </motion.div>
       </motion.div>
+      </div>
     </div>
   );
 }

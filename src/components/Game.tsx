@@ -147,44 +147,63 @@ export function Game() {
         backgroundImage: `url(${backgroundAssets.game})`,
         backgroundSize: 'cover',
         minHeight: '100vh',
+        position: 'relative'
+      }}
+    >
+      {/* Semi-transparent white overlay to improve readability */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        zIndex: 0
+      }} />
+      
+      {/* Content wrapper */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
         padding: '2rem',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
-      }}
-    >
-      {currentSession && (
-        <ProgressBar
-          current={sessionProgress}
-          total={currentSession.totalProblems}
-          animal={selectedAnimal}
-          treat={currentSession.treat}
-        />
-      )}
-      
-      {currentProblem && (
-        <ProblemDisplay
-          problem={currentProblem}
-          animal={selectedAnimal}
-          onAnswer={handleAnswer}
-        />
-      )}
-      
-      {showFeedback && (
-        <FeedbackOverlay
-          correct={lastAnswerCorrect}
-          shouldCelebrate={shouldCelebrate(performanceHistory)}
-          onContinue={handleContinue}
-        />
-      )}
+        alignItems: 'center',
+        minHeight: '100vh'
+      }}>
+        {currentSession && (
+          <ProgressBar
+            current={sessionProgress}
+            total={currentSession.totalProblems}
+            animal={selectedAnimal}
+            treat={currentSession.treat}
+          />
+        )}
+        
+        {currentProblem && (
+          <ProblemDisplay
+            problem={currentProblem}
+            animal={selectedAnimal}
+            onAnswer={handleAnswer}
+          />
+        )}
+        
+        {showFeedback && (
+          <FeedbackOverlay
+            correct={lastAnswerCorrect}
+            shouldCelebrate={shouldCelebrate(performanceHistory)}
+            onContinue={handleContinue}
+          />
+        )}
 
-      {showHalfway && currentSession && selectedAnimal && (
-        <HalfwayCelebration
-          animal={selectedAnimal}
-          treat={currentSession.treat}
-          onContinue={handleHalfwayContinue}
-        />
-      )}
+        {showHalfway && currentSession && selectedAnimal && (
+          <HalfwayCelebration
+            animal={selectedAnimal}
+            treat={currentSession.treat}
+            onContinue={handleHalfwayContinue}
+          />
+        )}
+      </div>
     </motion.div>
   );
 }
