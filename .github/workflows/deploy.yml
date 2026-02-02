@@ -33,6 +33,12 @@ jobs:
       - name: Run unit tests
         run: bun test
 
+      - name: Build for E2E tests
+        run: bun run build
+
+      - name: Copy assets for E2E tests
+        run: cp -r public/assets dist/
+
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium
 
