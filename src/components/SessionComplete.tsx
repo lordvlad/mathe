@@ -25,23 +25,24 @@ export function SessionComplete({
   return (
     <div 
       style={{ 
-        backgroundImage: `url(${backgroundAssets.welcome})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
         position: 'relative',
-        width: '100%'
+        minHeight: '100vh',
+        width: '100%',
+        backgroundColor: '#f5f5f5'
       }}
     >
-      {/* Light overlay to improve readability */}
+      {/* Background image with opacity */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundImage: `url(${backgroundAssets.welcome})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        opacity: 0.4,
         zIndex: 0
       }} />
       

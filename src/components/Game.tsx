@@ -143,22 +143,23 @@ export function Game() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ 
-        backgroundImage: `url(${backgroundAssets.welcome})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        position: 'relative',
         minHeight: '100vh',
-        position: 'relative'
+        backgroundColor: '#f5f5f5'
       }}
     >
-      {/* Light overlay to improve readability */}
+      {/* Background image with opacity */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundImage: `url(${backgroundAssets.welcome})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        opacity: 0.4,
         zIndex: 0
       }} />
       
