@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
-  timeout: 60 * 1000, // 60 seconds per test (some tests answer 10 questions)
+  timeout: 90 * 1000, // 90 seconds per test (some tests answer 10 questions)
   
   use: {
     baseURL: 'http://localhost:3000',

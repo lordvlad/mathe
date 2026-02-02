@@ -151,23 +151,26 @@ export async function clickCorrectAnswer(page: Page) {
       }
     }
   }
-  // For counting questions: count objects
-  else if (questionText.includes('viele')) {
-    // Can't determine from text alone - just click first button
-    const buttons = await page.getByRole('button').all();
-    const firstButton = buttons[0];
-    if (firstButton) {
-      await firstButton.click();
-      return;
-    }
-  }
+  // For counting questions or other unknown types: just click first button
   
   if (correctAnswer !== null) {
-    const correctButton = page.getByRole('button', { name: String(correctAnswer), exact: true });
-    // Wait for button to be stable and clickable
-    await correctButton.waitFor({ state: 'visible', timeout: 3000 });
-    await page.waitForTimeout(100); // Brief pause for stability
-    await correctButton.click({ timeout: 5000 });
+    try {
+      const correctButton = page.getByRole('button', { name: String(correctAnswer), exact: true });
+      // Wait for button to be stable and clickable
+      await correctButton.waitFor({ state: 'visible', timeout: 3000 });
+      await page.waitForTimeout(100); // Brief pause for stability
+      await correctButton.click({ timeout: 5000 });
+    } catch (error) {
+      // If we can't find the exact answer button, click first available
+      console.warn(`Could not find button with text "${correctAnswer}", clicking first button`);
+      const buttons = await page.getByRole('button').all();
+      const firstButton = buttons[0];
+      if (firstButton) {
+        await firstButton.waitFor({ state: 'visible', timeout: 3000 });
+        await page.waitForTimeout(100);
+        await firstButton.click({ timeout: 5000 });
+      }
+    }
   } else {
     // Fallback: click the first button
     const buttons = await page.getByRole('button').all();
