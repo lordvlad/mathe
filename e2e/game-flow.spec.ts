@@ -15,10 +15,10 @@ test.describe('Math Game Complete Flow', () => {
     await clearGameState(page);
     
     // 2. Welcome screen should be visible
-    await expect(page.getByText('Wähle deinen Freund!')).toBeVisible();
+    await expect(page.getByText('Wähle deinen Begleiter!')).toBeVisible();
     
-    // 3. Select an animal (rabbit)
-    const rabbitCard = page.locator('[alt="rabbit"]').first();
+    // 3. Select an animal (rabbit/Hase)
+    const rabbitCard = page.locator('[alt="Hase"]').first();
     await expect(rabbitCard).toBeVisible();
     await rabbitCard.click();
     
@@ -66,14 +66,14 @@ test.describe('Math Game Complete Flow', () => {
     await playAgainButton.click();
     
     // 9. Should return to welcome screen
-    await expect(page.getByText('Wähle deinen Freund!')).toBeVisible();
+    await expect(page.getByText('Wähle deinen Begleiter!')).toBeVisible();
   });
 
   test('should handle mix of correct and incorrect answers', async ({ page }) => {
     await page.goto('/');
     
     // Select animal and start
-    await page.locator('[alt="dog"]').first().click();
+    await page.locator('[alt="Hund"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
     let correctCount = 0;
@@ -113,7 +113,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Select animal and start
-    await page.locator('[alt="fox"]').first().click();
+    await page.locator('[alt="Fuchs"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
     // Answer first 5 questions correctly
@@ -139,7 +139,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Check that all 8 animals are displayed
-    const animals = ['rabbit', 'bear', 'fox', 'dog', 'cat', 'panda', 'koala', 'lion'];
+    const animals = ['Hase', 'Bär', 'Fuchs', 'Hund', 'Katze', 'Panda', 'Koala', 'Löwe'];
     
     for (const animal of animals) {
       await expect(page.locator(`[alt="${animal}"]`)).toBeVisible();
@@ -150,7 +150,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Select animal and start
-    await page.locator('[alt="cat"]').first().click();
+    await page.locator('[alt="Katze"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
     // Check initial progress
@@ -186,7 +186,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Select animal
-    await page.locator('[alt="bear"]').first().click();
+    await page.locator('[alt="Bär"]').first().click();
     
     // Check that state was saved
     const state = await page.evaluate(() => {
@@ -202,7 +202,7 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Select animal and start
-    await page.locator('[alt="panda"]').first().click();
+    await page.locator('[alt="Panda"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
     const problemTypes = new Set<string>();
@@ -235,13 +235,13 @@ test.describe('Math Game Complete Flow', () => {
     await page.goto('/');
     
     // Elements should still be visible
-    await expect(page.getByText('Wähle deinen Freund!')).toBeVisible();
+    await expect(page.getByText('Wähle deinen Begleiter!')).toBeVisible();
     
     // Animal grid should be visible
-    await expect(page.locator('[alt="rabbit"]')).toBeVisible();
+    await expect(page.locator('[alt="Hase"]')).toBeVisible();
     
     // Start a game
-    await page.locator('[alt="rabbit"]').first().click();
+    await page.locator('[alt="Hase"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
     
     // Progress bar should be visible
