@@ -1,0 +1,83 @@
+.container {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.animalImage {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  margin: 0 auto var(--spacing-md);
+  display: block;
+}
+
+.heading {
+  font-size: var(--font-size-2xl);
+  color: var(--text-dark);
+  margin-bottom: var(--spacing-xl);
+  font-weight: bold;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--pastel-yellow);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  transition: background var(--transition-fast);
+}
+
+.card:hover {
+  background: var(--pastel-peach);
+}
+
+.card:nth-child(2) {
+  background: var(--pastel-blue);
+}
+
+.card:nth-child(2):hover {
+  background: var(--pastel-green);
+}
+
+.cardEmoji {
+  font-size: 3.5rem;
+}
+
+.cardTitle {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.cardDescription {
+  font-size: var(--font-size-sm);
+  color: var(--text-medium);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .heading {
+    font-size: var(--font-size-xl);
+  }
+}

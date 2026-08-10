@@ -35,6 +35,7 @@ const INITIAL_HISTORY: PerformanceHistory = {
 
 interface GameActions {
   selectAnimal: (animal: CompanionAnimal) => void;
+  selectGame: (game: GameState['selectedGame']) => void;
   startSession: (goal: SessionGoal) => void;
   setCurrentProblem: (problem: Problem) => void;
   submitAnswer: (correct: boolean, timeMs: number, problemType: Problem['type']) => void;
@@ -50,6 +51,7 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       // Initial State
       selectedAnimal: null,
+      selectedGame: null,
       currentSession: null,
       currentProblem: null,
       sessionProgress: 0,
@@ -60,6 +62,10 @@ export const useGameStore = create<GameStore>()(
       // Actions
       selectAnimal: (animal) => {
         set({ selectedAnimal: animal });
+      },
+
+      selectGame: (game) => {
+        set({ selectedGame: game });
       },
 
       startSession: (goal) => {

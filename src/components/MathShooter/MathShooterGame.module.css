@@ -1,0 +1,107 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: var(--spacing-sm);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: white;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-xs);
+  width: min(480px, 92vw);
+  box-sizing: border-box;
+}
+
+.exitButton {
+  border: none;
+  background: var(--pastel-pink);
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mascot {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  flex-shrink: 0;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-dark);
+  font-weight: bold;
+}
+
+.canvasFrame {
+  width: min(480px, 92vw);
+  aspect-ratio: 480 / 640;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(180deg, var(--pastel-blue), white);
+  touch-action: none;
+}
+
+.canvasFrame canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hint {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-medium);
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 55, 72, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlayCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.overlayCard h2 {
+  font-size: var(--font-size-xl);
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.overlayCard p {
+  font-size: var(--font-size-lg);
+  color: var(--text-medium);
+  margin: 0;
+}

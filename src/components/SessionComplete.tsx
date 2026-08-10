@@ -10,6 +10,7 @@ interface SessionCompleteProps {
   treat: string;
   animal: CompanionAnimal;
   onPlayAgain: () => void;
+  onChangeGame?: () => void;
 }
 
 export function SessionComplete({
@@ -17,6 +18,7 @@ export function SessionComplete({
   treat,
   animal,
   onPlayAgain,
+  onChangeGame,
 }: SessionCompleteProps) {
   // Determine celebration level based on score
   const isPerfect = correctCount === 10;
@@ -183,8 +185,12 @@ export function SessionComplete({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 1.5 }}
+          style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}
         >
           <Button onClick={onPlayAgain}>Nochmal spielen</Button>
+          {onChangeGame && (
+            <Button variant="secondary" onClick={onChangeGame}>Anderes Spiel</Button>
+          )}
         </motion.div>
       </motion.div>
     </div>

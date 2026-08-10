@@ -12,6 +12,11 @@ export type ProblemType =
   | 'oddOneOut';
 
 /**
+ * Available games the player can pick after choosing a companion
+ */
+export type GameId = 'quiz' | 'shooter';
+
+/**
  * Available companion animals
  */
 export type CompanionAnimal =
@@ -82,6 +87,7 @@ export interface SessionGoal {
  */
 export interface GameState {
   selectedAnimal: CompanionAnimal | null;
+  selectedGame: GameId | null;
   currentSession: SessionGoal | null;
   currentProblem: Problem | null;
   sessionProgress: number; // 0-10

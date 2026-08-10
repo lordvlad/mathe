@@ -5,6 +5,8 @@ import { generateProblem, getRandomProblemType } from '@/lib/problemGenerator';
 import { createSession, checkAnswer } from '@/lib/sessionManager';
 import { calculateDifficulty, shouldCelebrate } from '@/lib/difficultyEngine';
 import { WelcomeScreen } from './WelcomeScreen';
+import { GamePickScreen } from './GamePickScreen';
+import { MathShooterGame } from './MathShooter/MathShooterGame';
 import { ProblemDisplay } from './ProblemDisplay';
 import { FeedbackOverlay } from './FeedbackOverlay';
 import { HalfwayCelebration } from './HalfwayCelebration';
@@ -14,6 +16,7 @@ import { backgroundAssets } from '@/assets';
 export function Game() {
   const {
     selectedAnimal,
+    selectedGame,
     currentSession,
     currentProblem,
     sessionProgress,
@@ -21,6 +24,7 @@ export function Game() {
     performanceHistory,
     isSessionActive,
     selectAnimal,
+    selectGame,
     startSession,
     setCurrentProblem,
     submitAnswer,
@@ -29,6 +33,7 @@ export function Game() {
     updateDifficulty,
   } = useGameStore();
 
+  const [showGamePick, setShowGamePick] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showHalfway, setShowHalfway] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
@@ -103,18 +108,30 @@ export function Game() {
   // Play again after session complete
   const handlePlayAgain = () => {
     if (!selectedAnimal) return;
-    
+
     // Reset counters and start a fresh session
     setCorrectCount(0);
     const session = createSession(selectedAnimal);
-    
+
     // Reset session state and start new one
     resetSession();
     startSession(session);
   };
 
+  // Leave the current game and return to the game picker
+  const handleChangeGame = () => {
+    resetSession();
+    selectGame(null);
+    setShowGamePick(true);
+  };
+
   // Render different screens based on state
-  
+
+  // The marble shooter owns its whole screen once picked
+  if (selectedGame === 'shooter' && selectedAnimal) {
+    return <MathShooterGame animal={selectedAnimal} onExit={handleChangeGame} />;
+  }
+
   // Check for session completion FIRST (before checking isSessionActive)
   if (sessionProgress >= 10 && selectedAnimal && currentSession) {
     return (
@@ -123,17 +140,32 @@ export function Game() {
         treat={currentSession.treat}
         animal={selectedAnimal}
         onPlayAgain={handlePlayAgain}
+        onChangeGame={handleChangeGame}
       />
     );
   }
 
-  // Show welcome screen if no animal selected or session not active
-  if (!selectedAnimal || !isSessionActive) {
+  // Show the animal picker, or the "ready" screen once an animal is chosen
+  // but the player hasn't confirmed which game to play yet.
+  if (!selectedAnimal || (!showGamePick && !isSessionActive)) {
     return (
       <WelcomeScreen
         selectedAnimal={selectedAnimal}
         onSelectAnimal={handleSelectAnimal}
-        onStartSession={handleStartSession}
+        onStartSession={() => setShowGamePick(true)}
+      />
+    );
+  }
+
+  // Let the player pick which game to play
+  if (!selectedGame && !isSessionActive && selectedAnimal) {
+    return (
+      <GamePickScreen
+        animal={selectedAnimal}
+        onPick={(game) => {
+          selectGame(game);
+          if (game === 'quiz') handleStartSession();
+        }}
       />
     );
   }
@@ -142,7 +174,7 @@ export function Game() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ 
+      style={{
         padding: '1vh',
         display: 'flex',
         flexDirection: 'column',
@@ -162,7 +194,7 @@ export function Game() {
             treat={currentSession.treat}
           />
         )}
-        
+
         {showFeedback && (
           <FeedbackOverlay
             correct={lastAnswerCorrect}

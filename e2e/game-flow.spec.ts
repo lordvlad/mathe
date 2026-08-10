@@ -26,6 +26,9 @@ test.describe('Math Game Complete Flow', () => {
     const startButton = page.getByRole('button', { name: /Los geht's/i });
     await expect(startButton).toBeVisible();
     await startButton.click();
+
+    // 4b. Choose the Mathe-Quiz from the new game picker
+    await page.getByTestId('game-pick-quiz').click();
     
     // 5. Progress bar should be visible (starts at 0)
     await expect(page.getByText('0 von 10')).toBeVisible();
@@ -73,6 +76,7 @@ test.describe('Math Game Complete Flow', () => {
     // Select animal and start
     await page.locator('[alt="Hund"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
+    await page.getByTestId('game-pick-quiz').click();
     
     let correctCount = 0;
     
@@ -113,6 +117,7 @@ test.describe('Math Game Complete Flow', () => {
     // Select animal and start
     await page.locator('[alt="Fuchs"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
+    await page.getByTestId('game-pick-quiz').click();
     
     // Answer first 5 questions correctly
     for (let i = 1; i <= 5; i++) {
@@ -156,6 +161,7 @@ test.describe('Math Game Complete Flow', () => {
     // Select animal and start
     await page.locator('[alt="Katze"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
+    await page.getByTestId('game-pick-quiz').click();
     
     // Check initial progress (starts at 0)
     await expect(page.getByText('0 von 10')).toBeVisible();
@@ -174,10 +180,13 @@ test.describe('Math Game Complete Flow', () => {
     
     // Select animal with click (keyboard selection is tricky with custom buttons)
     await page.locator('[alt="Hase"]').first().click();
-    
+
     // Tab to start button
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
+
+    // Choose the Mathe-Quiz from the new game picker
+    await page.getByTestId('game-pick-quiz').click();
     
     // Game should start
     await expect(page.getByText(/\d+ von 10/)).toBeVisible({ timeout: 5000 });
@@ -205,6 +214,7 @@ test.describe('Math Game Complete Flow', () => {
     // Select animal and start
     await page.locator('[alt="Panda"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
+    await page.getByTestId('game-pick-quiz').click();
     
     // Answer 10 questions
     for (let i = 1; i <= 10; i++) {
@@ -241,6 +251,7 @@ test.describe('Math Game Complete Flow', () => {
     // Start a game
     await page.locator('[alt="Hase"]').first().click();
     await page.getByRole('button', { name: /Los geht's/i }).click();
+    await page.getByTestId('game-pick-quiz').click();
     
     // Progress bar should be visible (starts at 0)
     await expect(page.getByText('0 von 10')).toBeVisible();
