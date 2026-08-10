@@ -37,9 +37,23 @@ export interface PoppedMarble {
   value: number;
 }
 
+/**
+ * One absorption within a merge cascade: the marble at `from` disappears
+ * into the growing marble at `to`. `popped` is true when this step's
+ * `resultValue` reached the target, so `to` also disappears (with a
+ * sparkle) instead of persisting at the new value.
+ */
+export interface MergeStep {
+  from: { row: number; col: number; value: number };
+  to: { row: number; col: number };
+  resultValue: number;
+  popped: boolean;
+}
+
 export interface MergeOutcome {
   grid: Grid;
   popped: PoppedMarble[];
+  steps: MergeStep[];
   scoreGained: number;
   merged: boolean;
 }
@@ -152,10 +166,13 @@ export function findSnapCell(
 }
 
 /**
- * Places a marble and resolves the merge chain that follows: while the
- * placed marble has a same-value neighbor, they combine into their sum.
- * If the sum reaches `target`, the marble pops (removed, score awarded)
- * instead of continuing to merge.
+ * Places a marble and resolves the merge chain that follows. A shot marble
+ * that touches an existing same-value marble merges *into* it — the
+ * pre-existing (already-connected) marble is the one that grows, while the
+ * newly landed marble is absorbed and disappears. This keeps a merge chain
+ * anchored to wherever it already was in the grid instead of dragging the
+ * result toward the freshly shot cell. If a sum reaches `target`, the
+ * anchor pops (removed, score awarded) instead of continuing to merge.
  */
 export function placeAndResolve(
   grid: Grid,
@@ -166,53 +183,101 @@ export function placeAndResolve(
   target: number,
 ): MergeOutcome {
   const g = grid.map((r) => [...r]);
-  const startRow = g[row];
-  if (startRow) startRow[col] = { value };
 
-  const popped: PoppedMarble[] = [];
-  let scoreGained = 0;
-  let merged = false;
-  const cur = { row, col };
+  const anchorMatch = neighborsOf(row, col).find(([r, c]) => {
+    if (!inBounds(g, cols, r, c)) return false;
+    return g[r]?.[c]?.value === value;
+  });
 
-  // Cascading merges: keep absorbing matching neighbors into the growing marble.
-  // Guard against pathological loops with a generous cap (grid is tiny).
-  for (let iterations = 0; iterations < 64; iterations++) {
-    const curRow = g[cur.row];
-    if (!curRow) break;
-    const marble = curRow[cur.col];
-    if (!marble) break;
-
-    const match = neighborsOf(cur.row, cur.col).find(([r, c]) => {
-      if (!inBounds(g, cols, r, c)) return false;
-      return g[r]?.[c]?.value === marble.value;
-    });
-    if (!match) break;
-
-    const [nr, nc] = match;
-    const neighborRow = g[nr];
-    const neighborMarble = neighborRow?.[nc];
-    if (!neighborRow || !neighborMarble) break;
-
-    const newValue = marble.value + neighborMarble.value;
-    neighborRow[nc] = null;
-    merged = true;
-
-    if (newValue >= target) {
-      curRow[cur.col] = null;
-      popped.push({ row: cur.row, col: cur.col, value: newValue });
-      scoreGained += newValue;
-      break;
-    }
-
-    curRow[cur.col] = { value: newValue };
+  if (!anchorMatch) {
+    const landingRow = g[row];
+    if (landingRow) landingRow[col] = { value };
+    return { grid: g, popped: [], steps: [], scoreGained: 0, merged: false };
   }
 
-  return { grid: g, popped, scoreGained, merged };
+  const cur = { row: anchorMatch[0], col: anchorMatch[1] };
+  const anchorRow = g[cur.row];
+  const anchorMarble = anchorRow?.[cur.col];
+  if (!anchorRow || !anchorMarble) {
+    // Unreachable given anchorMatch already confirmed this cell; keeps the
+    // function total under strict indexed-access typing.
+    const landingRow = g[row];
+    if (landingRow) landingRow[col] = { value };
+    return { grid: g, popped: [], steps: [], scoreGained: 0, merged: false };
+  }
+
+  const popped: PoppedMarble[] = [];
+  const steps: MergeStep[] = [];
+  let scoreGained = 0;
+
+  // The landed marble is consumed by the anchor immediately — it never
+  // occupies (row, col) in the returned grid.
+  let currentValue = anchorMarble.value + value;
+  let willPop = currentValue >= target;
+  steps.push({
+    from: { row, col, value },
+    to: { row: cur.row, col: cur.col },
+    resultValue: currentValue,
+    popped: willPop,
+  });
+
+  if (willPop) {
+    anchorRow[cur.col] = null;
+    popped.push({ row: cur.row, col: cur.col, value: currentValue });
+    scoreGained += currentValue;
+  } else {
+    anchorRow[cur.col] = { value: currentValue };
+
+    // Further cascading merges: keep absorbing matching neighbors into the
+    // anchor. Guard against pathological loops with a generous cap (grid is
+    // tiny).
+    for (let iterations = 0; iterations < 64; iterations++) {
+      const curRow = g[cur.row];
+      if (!curRow) break;
+      const marble = curRow[cur.col];
+      if (!marble) break;
+
+      const match = neighborsOf(cur.row, cur.col).find(([r, c]) => {
+        if (!inBounds(g, cols, r, c)) return false;
+        return g[r]?.[c]?.value === marble.value;
+      });
+      if (!match) break;
+
+      const [nr, nc] = match;
+      const neighborRow = g[nr];
+      const neighborMarble = neighborRow?.[nc];
+      if (!neighborRow || !neighborMarble) break;
+
+      currentValue = marble.value + neighborMarble.value;
+      neighborRow[nc] = null;
+      willPop = currentValue >= target;
+      steps.push({
+        from: { row: nr, col: nc, value: neighborMarble.value },
+        to: { row: cur.row, col: cur.col },
+        resultValue: currentValue,
+        popped: willPop,
+      });
+
+      if (willPop) {
+        curRow[cur.col] = null;
+        popped.push({ row: cur.row, col: cur.col, value: currentValue });
+        scoreGained += currentValue;
+        break;
+      }
+
+      curRow[cur.col] = { value: currentValue };
+    }
+  }
+
+  return { grid: g, popped, steps, scoreGained, merged: true };
 }
 
 /**
  * Removes marbles that are no longer connected (directly or transitively)
  * to the ceiling (row 0) — mirrors classic bubble-shooter "floaters" falling.
+ * Safe to run after `placeAndResolve`: since merges always anchor at the
+ * pre-existing marble, this only ever catches marbles that were genuinely
+ * stranded by a pop or by other marbles being cleared away.
  */
 export function dropFloating(grid: Grid, cols: number): DropOutcome {
   const rows = grid.length;

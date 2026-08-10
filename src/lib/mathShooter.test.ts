@@ -81,24 +81,31 @@ describe('mathShooter', () => {
       expect(result.popped).toHaveLength(0);
     });
 
-    test('merges two equal-value neighbors into their sum', () => {
+    test('merges two equal-value neighbors into their sum, anchored at the existing marble', () => {
       const grid = createGrid(4, 8);
       grid[3]![1] = { value: 4 };
       const result = placeAndResolve(grid, 8, 3, 0, 4, 10);
       expect(result.merged).toBe(true);
-      expect(result.grid[3]![1]).toBeNull();
-      expect(result.grid[3]![0]).toEqual({ value: 8 });
+      // The shot marble (landing cell) is absorbed; the pre-existing marble grows and stays put.
+      expect(result.grid[3]![0]).toBeNull();
+      expect(result.grid[3]![1]).toEqual({ value: 8 });
       expect(result.popped).toHaveLength(0);
+      expect(result.steps).toEqual([
+        { from: { row: 3, col: 0, value: 4 }, to: { row: 3, col: 1 }, resultValue: 8, popped: false },
+      ]);
     });
 
-    test('pops the marble once its merged value reaches the target', () => {
+    test('pops the pre-existing marble once its merged value reaches the target', () => {
       const grid = createGrid(4, 8);
       grid[3]![1] = { value: 5 };
       const result = placeAndResolve(grid, 8, 3, 0, 5, 10);
       expect(result.grid[3]![0]).toBeNull();
       expect(result.grid[3]![1]).toBeNull();
-      expect(result.popped).toEqual([{ row: 3, col: 0, value: 10 }]);
+      expect(result.popped).toEqual([{ row: 3, col: 1, value: 10 }]);
       expect(result.scoreGained).toBe(10);
+      expect(result.steps).toEqual([
+        { from: { row: 3, col: 0, value: 5 }, to: { row: 3, col: 1 }, resultValue: 10, popped: true },
+      ]);
     });
 
     test('cascades through a chain of equal values before popping', () => {
@@ -112,6 +119,11 @@ describe('mathShooter', () => {
       expect(result.grid[2]![1]).toBeNull();
       expect(result.grid[1]![0]).toBeNull();
       expect(result.grid[3]![0]).toBeNull();
+      expect(result.steps.map((s) => [s.resultValue, s.popped])).toEqual([
+        [4, false],
+        [8, false],
+        [16, true],
+      ]);
     });
   });
 
@@ -133,6 +145,21 @@ describe('mathShooter', () => {
       const { grid: after, dropped } = dropFloating(grid, 8);
       expect(dropped).toEqual([{ row: 2, col: 5, value: 3 }]);
       expect(after[2]![5]).toBeNull();
+    });
+  });
+
+  describe('merge + drop integration', () => {
+    test('a merge that keeps the anchor connected is never swept away as a floater', () => {
+      // Anchor (1,0)=2 is connected to the ceiling via (0,0)=9. The shot
+      // marble merges INTO the anchor (not the other way around), so the
+      // anchor keeps its connection and must survive dropFloating.
+      const grid = createGrid(4, 8);
+      grid[0]![0] = { value: 9 };
+      grid[1]![0] = { value: 2 };
+      const merge = placeAndResolve(grid, 8, 2, 0, 2, 10);
+      const { grid: after, dropped } = dropFloating(merge.grid, 8);
+      expect(dropped).toHaveLength(0);
+      expect(after[1]![0]).toEqual({ value: 4 });
     });
   });
 });

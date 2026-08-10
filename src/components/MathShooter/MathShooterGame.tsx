@@ -15,6 +15,8 @@ import {
   createGrid,
   type Grid,
   type Geometry,
+  type MergeOutcome,
+  type DropOutcome,
 } from '@/lib/mathShooter';
 import { animalAssets } from '@/assets';
 import { Button } from '../Button';
@@ -106,6 +108,25 @@ function drawCannonTexture(): THREE.CanvasTexture {
   return texture;
 }
 
+function drawSparkleTexture(): THREE.CanvasTexture {
+  const size = 32;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0, 'rgba(255,255,255,1)');
+  gradient.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.fill();
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
 export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [level, setLevel] = useState(1);
@@ -125,6 +146,7 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
   const aimRef = useRef({ x: CANNON_X, y: 0 });
   const levelRef = useRef(1);
   const advanceRef = useRef<(levelNumber: number) => void>(() => {});
+  const animatingRef = useRef(false);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -152,10 +174,13 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
 
     const marbleGroup = new THREE.Group();
     scene.add(marbleGroup);
+    const spriteMap = new Map<string, THREE.Sprite>();
 
-    const rebuildMarbles = () => {
+    // Renders `grid` as-is (used both for the logical grid and for the
+    // in-between "display" states the merge animation steps through).
+    const renderGrid = (grid: Grid) => {
       marbleGroup.clear();
-      const grid = gridRef.current;
+      spriteMap.clear();
       for (let r = 0; r < grid.length; r++) {
         const gridRow = grid[r];
         if (!gridRow) continue;
@@ -163,14 +188,18 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
         for (let c = 0; c < count; c++) {
           const marble = gridRow[c];
           if (!marble) continue;
-          const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: marbleTexture(marble.value) }));
+          const sprite = new THREE.Sprite(
+            new THREE.SpriteMaterial({ map: marbleTexture(marble.value), transparent: true }),
+          );
           const { x, y } = cellCenter(r, c, GEO);
           sprite.position.set(x, -y, 0);
           sprite.scale.set(RADIUS * 2, RADIUS * 2, 1);
           marbleGroup.add(sprite);
+          spriteMap.set(`${r},${c}`, sprite);
         }
       }
     };
+    const rebuildMarbles = () => renderGrid(gridRef.current);
     rebuildMarbles();
 
     const projectileSprite = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true }));
@@ -210,6 +239,54 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
     dangerLine.computeLineDistances();
     scene.add(dangerLine);
 
+    // --- Tween + particle helpers for the merge/pop animation ---------------
+    interface Tween {
+      start: number;
+      duration: number;
+      update: (t: number) => void;
+      resolve: () => void;
+    }
+    const tweens: Tween[] = [];
+    const addTween = (duration: number, update: (t: number) => void) =>
+      new Promise<void>((resolve) => {
+        tweens.push({ start: performance.now(), duration: Math.max(duration, 1), update, resolve });
+      });
+
+    interface Particle {
+      sprite: THREE.Sprite;
+      vx: number;
+      vy: number;
+      life: number;
+      maxLife: number;
+    }
+    const particles: Particle[] = [];
+    const sparkleTexture = drawSparkleTexture();
+    const spawnSparkles = (x: number, y: number, value: number) => {
+      const hue = (value * 47) % 360;
+      for (let i = 0; i < 10; i++) {
+        const material = new THREE.SpriteMaterial({
+          map: sparkleTexture,
+          color: new THREE.Color(`hsl(${hue}, 90%, 78%)`),
+          transparent: true,
+          depthWrite: false,
+        });
+        const sprite = new THREE.Sprite(material);
+        const size = 8 + Math.random() * 10;
+        sprite.scale.set(size, size, 1);
+        sprite.position.set(x, -y, 4);
+        scene.add(sprite);
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 70 + Math.random() * 110;
+        particles.push({
+          sprite,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 0,
+          maxLife: 0.4 + Math.random() * 0.3,
+        });
+      }
+    };
+
     const spawnLevel = (levelNumber: number) => {
       const config = getLevelConfig(levelNumber);
       levelRef.current = levelNumber;
@@ -232,6 +309,113 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
     };
     updatePreviewSprites();
 
+    const MERGE_STEP_MS = 240;
+    const POP_PAUSE_MS = 160;
+    const DROP_MS = 340;
+
+    // Steps the display through the merge cascade and floater drop one beat
+    // at a time: absorbed marbles slide into the marble they matched before
+    // vanishing, popped marbles burst into sparkles, stranded marbles fall,
+    // and only then does the next shot become available.
+    const animateSettlement = async (preMergeGrid: Grid, merge: MergeOutcome, drop: DropOutcome) => {
+      renderGrid(preMergeGrid);
+
+      for (const step of merge.steps) {
+        const fromCenter = cellCenter(step.from.row, step.from.col, GEO);
+        const toCenter = cellCenter(step.to.row, step.to.col, GEO);
+        const midX = (fromCenter.x + toCenter.x) / 2;
+        const midY = (fromCenter.y + toCenter.y) / 2;
+        const fromKey = `${step.from.row},${step.from.col}`;
+        const toKey = `${step.to.row},${step.to.col}`;
+        const fromSprite = spriteMap.get(fromKey);
+        const toSprite = spriteMap.get(toKey);
+
+        await addTween(MERGE_STEP_MS, (t) => {
+          if (fromSprite) {
+            fromSprite.position.set(
+              fromCenter.x + (midX - fromCenter.x) * t,
+              -(fromCenter.y + (midY - fromCenter.y) * t),
+              0,
+            );
+            fromSprite.material.opacity = 1 - t;
+            const shrink = RADIUS * 2 * (1 - 0.5 * t);
+            fromSprite.scale.set(shrink, shrink, 1);
+          }
+          if (toSprite) {
+            const pulse = 1 + 0.22 * Math.sin(t * Math.PI);
+            toSprite.scale.set(RADIUS * 2 * pulse, RADIUS * 2 * pulse, 1);
+          }
+        });
+
+        if (fromSprite) {
+          marbleGroup.remove(fromSprite);
+          fromSprite.material.dispose();
+          spriteMap.delete(fromKey);
+        }
+
+        if (step.popped) {
+          if (toSprite) {
+            marbleGroup.remove(toSprite);
+            toSprite.material.dispose();
+            spriteMap.delete(toKey);
+          }
+          spawnSparkles(toCenter.x, toCenter.y, step.resultValue);
+          setScore((prev) => prev + step.resultValue);
+          await addTween(POP_PAUSE_MS, () => {});
+        } else if (toSprite) {
+          toSprite.scale.set(RADIUS * 2, RADIUS * 2, 1);
+          toSprite.material.map = marbleTexture(step.resultValue);
+          toSprite.material.needsUpdate = true;
+        }
+      }
+
+      if (drop.dropped.length > 0) {
+        await Promise.all(
+          drop.dropped.map(async (marble) => {
+            const key = `${marble.row},${marble.col}`;
+            const sprite = spriteMap.get(key);
+            if (!sprite) return;
+            const start = cellCenter(marble.row, marble.col, GEO);
+            await addTween(DROP_MS, (t) => {
+              sprite.position.set(start.x, -(start.y + 90 * t * t), 0);
+              sprite.material.opacity = 1 - t;
+            });
+            marbleGroup.remove(sprite);
+            sprite.material.dispose();
+            spriteMap.delete(key);
+          }),
+        );
+        setScore((prev) => prev + drop.dropped.reduce((sum, marble) => sum + marble.value, 0));
+      }
+
+      // Guarantee the display exactly matches logical truth once the
+      // animation settles (defends against any step/drop desync).
+      renderGrid(gridRef.current);
+
+      if (isGridEmpty(gridRef.current)) {
+        statusRef.current = 'levelComplete';
+        setStatus('levelComplete');
+        animatingRef.current = false;
+        return;
+      }
+
+      const dangerHit = gridRef.current
+        .slice(DANGER_ROW)
+        .some((row, idx) => row.slice(0, colsInRow(DANGER_ROW + idx, COLS)).some((cell) => cell !== null));
+      if (dangerHit) {
+        statusRef.current = 'gameOver';
+        setStatus('gameOver');
+        animatingRef.current = false;
+        return;
+      }
+
+      currentValueRef.current = nextValueRef.current;
+      nextValueRef.current = randomInt(valueRangeRef.current[0], valueRangeRef.current[1]);
+      setNextValue(nextValueRef.current);
+      updatePreviewSprites();
+      animatingRef.current = false;
+    };
+
     const settleProjectile = (x: number, y: number) => {
       const projectile = projectileRef.current;
       if (!projectile) return;
@@ -244,42 +428,53 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
         return;
       }
 
+      const preMergeGrid = gridRef.current.map((r) => [...r]);
+      const preMergeRow = preMergeGrid[snap.row];
+      if (preMergeRow) preMergeRow[snap.col] = { value: projectile.value };
+
       const merge = placeAndResolve(gridRef.current, COLS, snap.row, snap.col, projectile.value, targetRef.current);
       const drop = dropFloating(merge.grid, COLS);
       gridRef.current = drop.grid;
 
-      const gained = merge.scoreGained + drop.dropped.reduce((sum, marble) => sum + marble.value, 0);
-      if (gained > 0) setScore((prev) => prev + gained);
-
       projectileRef.current = null;
       projectileSprite.visible = false;
-      rebuildMarbles();
+      animatingRef.current = true;
 
-      if (isGridEmpty(gridRef.current)) {
-        statusRef.current = 'levelComplete';
-        setStatus('levelComplete');
-        return;
-      }
-
-      const dangerHit = gridRef.current
-        .slice(DANGER_ROW)
-        .some((row, idx) => row.slice(0, colsInRow(DANGER_ROW + idx, COLS)).some((cell) => cell !== null));
-      if (dangerHit) {
-        statusRef.current = 'gameOver';
-        setStatus('gameOver');
-        return;
-      }
-
-      currentValueRef.current = nextValueRef.current;
-      nextValueRef.current = randomInt(valueRangeRef.current[0], valueRangeRef.current[1]);
-      setNextValue(nextValueRef.current);
-      updatePreviewSprites();
+      void animateSettlement(preMergeGrid, merge, drop);
     };
 
     let lastTime = performance.now();
     renderer.setAnimationLoop((time) => {
       const dt = Math.min((time - lastTime) / 1000, 1 / 30);
       lastTime = time;
+
+      const now = performance.now();
+      for (let i = tweens.length - 1; i >= 0; i--) {
+        const tw = tweens[i];
+        if (!tw) continue;
+        const t = Math.min(1, (now - tw.start) / tw.duration);
+        tw.update(t);
+        if (t >= 1) {
+          tweens.splice(i, 1);
+          tw.resolve();
+        }
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        if (!p) continue;
+        p.life += dt;
+        const lt = p.life / p.maxLife;
+        if (lt >= 1) {
+          scene.remove(p.sprite);
+          p.sprite.material.dispose();
+          particles.splice(i, 1);
+          continue;
+        }
+        p.sprite.position.x += p.vx * dt;
+        p.sprite.position.y -= p.vy * dt;
+        p.sprite.material.opacity = 1 - lt;
+      }
 
       const projectile = projectileRef.current;
       if (projectile && statusRef.current === 'playing') {
@@ -347,7 +542,7 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
 
     const container = mount;
     const shoot = () => {
-      if (statusRef.current !== 'playing' || projectileRef.current) return;
+      if (statusRef.current !== 'playing' || projectileRef.current || animatingRef.current) return;
       const aim = aimRef.current;
       const dx = aim.x - CANNON_X;
       const dy = aim.y - CANNON_Y;
@@ -395,6 +590,8 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
       renderer.setAnimationLoop(null);
       renderer.dispose();
       textureCache.forEach((tex) => tex.dispose());
+      sparkleTexture.dispose();
+      particles.forEach((p) => p.sprite.material.dispose());
       mount.removeChild(renderer.domElement);
     };
     // Intentionally run once per game screen; `spawnLevel`/`settleProjectile` close
