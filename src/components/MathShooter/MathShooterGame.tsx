@@ -36,8 +36,12 @@ const GEO: Geometry = { originX: 32, originY: 16, radius: RADIUS };
 const ROW_HEIGHT = RADIUS * 2 * 0.87;
 const ROWS = 10;
 const DANGER_ROW = ROWS - 2;
-const PLAY_LEFT = GEO.originX;
-const PLAY_RIGHT = GEO.originX + COLS * RADIUS * 2;
+// The shot bounces off the actual canvas edges (not the grid's inner
+// bounds) so the visual container border matches where bank shots reflect.
+// These are wall *positions*; the bounce math below adds/subtracts RADIUS
+// to derive where the ball's center must clamp to touch them.
+const PLAY_LEFT = 0;
+const PLAY_RIGHT = WIDTH;
 const CANNON_Y = 600;
 const CANNON_X = WIDTH / 2;
 const PROJECTILE_SPEED = 640; // px/sec
@@ -102,6 +106,30 @@ function drawCannonTexture(): THREE.CanvasTexture {
   ctx.beginPath();
   ctx.arc(0, 20, 22, 0, Math.PI * 2);
   ctx.fillStyle = '#2D3748';
+  ctx.fill();
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function drawAimBeamTexture(): THREE.CanvasTexture {
+  const w = 64;
+  const h = 320;
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  // Tip at the top (y=0), wide base at the bottom (y=h) — matches the
+  // cannon texture's "tip up at rotation 0" convention.
+  const gradient = ctx.createLinearGradient(0, h, 0, 0);
+  gradient.addColorStop(0, 'rgba(74, 85, 104, 0.6)');
+  gradient.addColorStop(1, 'rgba(74, 85, 104, 0)');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.moveTo(w / 2, 0);
+  ctx.lineTo(w / 2 - 9, h);
+  ctx.lineTo(w / 2 + 9, h);
+  ctx.closePath();
   ctx.fill();
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;
@@ -223,13 +251,14 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
     cannonSprite.scale.set(64, 64, 1);
     scene.add(cannonSprite);
 
-    const aimGeometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(CANNON_X, -CANNON_Y, 0),
-      new THREE.Vector3(CANNON_X, 0, 0),
-    ]);
-    const aimLine = new THREE.Line(aimGeometry, new THREE.LineDashedMaterial({ color: 0x718096, dashSize: 8, gapSize: 6 }));
-    aimLine.computeLineDistances();
-    scene.add(aimLine);
+    const AIM_BEAM_LENGTH = 260;
+    const aimSprite = new THREE.Sprite(
+      new THREE.SpriteMaterial({ map: drawAimBeamTexture(), transparent: true, depthWrite: false }),
+    );
+    aimSprite.center.set(0.5, 0);
+    aimSprite.position.set(CANNON_X, -CANNON_Y, 0.5);
+    aimSprite.scale.set(40, AIM_BEAM_LENGTH, 1);
+    scene.add(aimSprite);
 
     const dangerGeometry = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(PLAY_LEFT, -(GEO.originY + RADIUS + DANGER_ROW * ROW_HEIGHT), 0),
@@ -296,7 +325,6 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
       currentValueRef.current = randomInt(config.valueRange[0], config.valueRange[1]);
       nextValueRef.current = randomInt(config.valueRange[0], config.valueRange[1]);
       setLevel(levelNumber);
-      setNextValue(nextValueRef.current);
       rebuildMarbles();
     };
     spawnLevel(1);
@@ -411,7 +439,6 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
 
       currentValueRef.current = nextValueRef.current;
       nextValueRef.current = randomInt(valueRangeRef.current[0], valueRangeRef.current[1]);
-      setNextValue(nextValueRef.current);
       updatePreviewSprites();
       animatingRef.current = false;
     };
@@ -527,15 +554,9 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
       const aim = aimRef.current;
       const dx = aim.x - CANNON_X;
       const dy = aim.y - CANNON_Y;
-      const angle = Math.atan2(dx, -dy);
+      const angle = Math.atan2(-dx, -dy);
       cannonSprite.material.rotation = angle;
-      const len = Math.max(1, Math.hypot(dx, dy));
-      const aimX = CANNON_X + (dx / len) * Math.min(len, 90);
-      const aimY = CANNON_Y + (dy / len) * Math.min(len, 90);
-      const positions = aimLine.geometry.attributes.position as THREE.BufferAttribute;
-      positions.setXYZ(0, CANNON_X, -CANNON_Y, 0);
-      positions.setXYZ(1, aimX, -aimY, 0);
-      positions.needsUpdate = true;
+      aimSprite.material.rotation = angle;
 
       renderer.render(scene, camera);
     });
@@ -568,15 +589,31 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
         y: Math.min(CANNON_Y - 10, Math.max(0, (clientY - rect.top) * scaleY)),
       };
     };
+    let isHolding = false;
     const handlePointerMove = (event: PointerEvent) => {
       aimRef.current = pointerToLogical(event.clientX, event.clientY);
     };
     const handlePointerDown = (event: PointerEvent) => {
+      isHolding = true;
+      aimRef.current = pointerToLogical(event.clientX, event.clientY);
+      container.setPointerCapture(event.pointerId);
+    };
+    const handlePointerUp = (event: PointerEvent) => {
+      if (!isHolding) return;
+      isHolding = false;
       aimRef.current = pointerToLogical(event.clientX, event.clientY);
       shoot();
+      if (container.hasPointerCapture(event.pointerId)) {
+        container.releasePointerCapture(event.pointerId);
+      }
+    };
+    const handlePointerCancel = () => {
+      isHolding = false;
     };
     container.addEventListener('pointermove', handlePointerMove);
     container.addEventListener('pointerdown', handlePointerDown);
+    container.addEventListener('pointerup', handlePointerUp);
+    container.addEventListener('pointercancel', handlePointerCancel);
 
     advanceRef.current = (levelNumber: number) => {
       statusRef.current = 'playing';
@@ -587,6 +624,8 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
     return () => {
       container.removeEventListener('pointermove', handlePointerMove);
       container.removeEventListener('pointerdown', handlePointerDown);
+      container.removeEventListener('pointerup', handlePointerUp);
+      container.removeEventListener('pointercancel', handlePointerCancel);
       renderer.setAnimationLoop(null);
       renderer.dispose();
       textureCache.forEach((tex) => tex.dispose());
@@ -617,13 +656,12 @@ export function MathShooterGame({ animal, onExit }: MathShooterGameProps) {
           <span data-testid="shooter-level">Level {level}</span>
           <span data-testid="shooter-score">Punkte: {score}</span>
           <span data-testid="shooter-target">Ziel: {targetRef.current}</span>
-          <span data-testid="shooter-next">Nächste Zahl: {nextValue}</span>
         </div>
       </div>
 
       <div className={styles.canvasFrame} ref={mountRef} />
 
-      <p className={styles.hint}>Ziele mit der Maus und tippe zum Schießen. Gleiche Zahlen verschmelzen!</p>
+      <p className={styles.hint}>Ziehe zum Zielen, lass los zum Schießen. Gleiche Zahlen verschmelzen!</p>
 
       {status === 'levelComplete' && (
         <motion.div className={styles.overlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }} data-testid="shooter-level-complete">
